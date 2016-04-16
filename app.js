@@ -26,12 +26,27 @@ var treesSchema = mongoose.Schema({
     plant_time: Number
 });
 
-var Trees = mongoose.model('Trees', treesSchema);
-Trees.find(function (err, trees) {
-  if (err) return console.error(err);
-  console.log(trees);
-})
+var typesSchema = mongoose.Schema({
+    _id: String,
+    name: String,
+    o2rate: Number,
+    growth_rate: Number,
+    life_span: Number
+});
 
+var usersSchema = mongoose.Schema({
+    _id: String,
+    name: String,
+    email: String,
+    type: Number,
+    trees: [String]
+});
+
+var Users = mongoose.model('Users', treesSchema);
+Users.find(function (err, users) {
+  if (err) return console.error(err);
+  console.log(users);
+})
 
 app.get('/', function (req, res) {
   res.send('Hello World!');
@@ -40,6 +55,8 @@ app.get('/', function (req, res) {
 app.listen(80, function () {
   console.log('Treeify app listening on port 80!');
 });
+
+
 
 
 // mongodb://<dbuser>:<dbpassword>@ds011251.mlab.com:11251/treeify

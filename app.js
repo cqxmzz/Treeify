@@ -2,10 +2,13 @@ var express = require('express');
 var app = express();
 app.use(express.static('public'));
 
-//=========MODEL=========
+//=========MODELS=========
 
-var model = require('./model');
+var models = require('./models');
 
+//=========SERVICES=========
+
+var services = require('./services');
 
 //=========Routing=========
 

@@ -8,3 +8,8 @@ app.get('/', function (req, res) {
 app.listen(3000, function () {
   console.log('Example app listening on port 3000!');
 });
+
+
+// mongodb://<dbuser>:<dbpassword>@ds011251.mlab.com:11251/treeify
+// dbuser: treeify
+// dbpassword: treeify

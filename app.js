@@ -2,17 +2,10 @@ var express = require('express');
 var app = express();
 app.use(express.static('public'));
 
-//=========DB=========
+//=========MODEL=========
 
-var mongoose = require('mongoose');
-mongoose.connect('mongodb://treeify:treeify@ds011251.mlab.com:11251/treeify');
-var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function() {
-  console.log('Connected to mongoose!');
-   var createSchema = require('./schema');
-   createSchema(mongoose);
-});
+var model = require('./model');
+
 
 //=========Routing=========
 

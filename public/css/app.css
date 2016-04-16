@@ -1,0 +1,24 @@
+html, body { 
+    height: 100%; 
+    width: 100%; 
+    margin: 0; 
+    padding: 0; 
+}
+
+.esriViewPopup .gallery { 
+    margin: 0 auto !important; 
+}
+
+#esri-map {
+    width: 80%;
+    margin: 0 auto;
+    height: 100%;
+    overflow: hidden;
+    
+    position: relative;
+}
+
+#map{ 
+    margin: 0; 
+    padding: 0; 
+}

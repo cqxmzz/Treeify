@@ -11,6 +11,28 @@ db.once('open', function() {
   console.log('Connected to mongoose!');
 });
 
+var sessionsSchema = mongoose.Schema({
+    _id: String,
+    u_id: String
+});
+
+var treesSchema = mongoose.Schema({
+    _id: String,
+    type: String,
+    location: {
+		x: Number,
+		y: Number
+    },
+    plant_time: Number
+});
+
+var Trees = mongoose.model('Trees', treesSchema);
+Trees.find(function (err, trees) {
+  if (err) return console.error(err);
+  console.log(trees);
+})
+
+
 app.get('/', function (req, res) {
   res.send('Hello World!');
 });

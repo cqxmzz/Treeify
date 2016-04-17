@@ -7,6 +7,25 @@ html, body {
     color: #fff;
 }
 
+.x-action-home-only,
+.x-action-my-trees-only,
+.x-action-ranking-only {
+    display: none;
+    transition: 0.5s;
+}
+
+.x-action-home .x-action-home-only {
+    display: block;
+}
+
+.x-action-my-trees .x-action-my-trees-only {
+    display: block;
+}
+
+.x-action-ranking .x-action-ranking-only {
+    display: block;
+}
+
 .x-icon {
     background-repeat: no-repeat;
     background-size: contain;
@@ -14,11 +33,28 @@ html, body {
     height: 16px;
 }
 .x-t-green-text {
-    color: #005b27;
+    color: #005b27 !important;
 }
 
 .x-t-green-background {
-    background-color: #005b27;
+    background-color: #005b27 !important;
+}
+
+.x-t-orange-text {
+    color: #ff8500 !important;
+}
+
+
+.x-t-orange-background {
+    background-color: #ff8500 !important;
+}
+
+.x-t-blue-text {
+    color: #4783bf !important;
+}
+
+.x-t-blue-background {
+    background-color: #4783bf !important;
 }
 
 .esriViewPopup .gallery { 
@@ -116,6 +152,7 @@ html, body {
 .x-action {
     width: 100%;    
     margin-bottom: 30px;
+    cursor: pointer;
 }
 
 .x-action .x-action-pic {
@@ -199,17 +236,106 @@ html, body {
     font-size: 18px;
 }
 
-#esri-map {
+#main-content-container {    
     margin: 20px 0;
     overflow: hidden;    
     position: relative;
     height: calc(100% - 200px);
 }
 
+#esri-map {    
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    transition: 0.5s;
+}
+
+.x-action-my-trees #esri-map {
+    width: calc(50% - 10px);
+    float: left;
+}
+
 #map{ 
     margin: 0; 
     padding: 0; 
 }
+
+#my-trees-user-stats {    
+    width: calc(50% - 10px);
+    float: right;
+    height: 100%;
+}
+
+#tree-legend {
+    overflow: hidden;
+    height: 68px;
+    overflow: hidden;
+}
+
+#tree-legend .x-tree-legend-item {
+    float: left;
+    width: calc(100% / 4);
+}
+
+#tree-legend .x-tree-legend-item .x-icon {
+    margin: 0 auto;
+    width: 50px;
+    height: 50px;
+    border-radius: 25px;
+    overflow: hidden;
+}
+
+#tree-legend .x-tree-legend-item.x-stage-1 .x-icon {
+    background-image: url(/img/icons/tree-stage-1.png);
+}
+
+#tree-legend .x-tree-legend-item.x-stage-2 .x-icon {
+    background-image: url(/img/icons/tree-stage-2.png);
+}
+
+
+#tree-legend .x-tree-legend-item.x-stage-3 .x-icon {
+    background-image: url(/img/icons/tree-stage-3.png);
+}
+
+
+#tree-legend .x-tree-legend-item.x-stage-4 .x-icon {
+    background-image: url(/img/icons/tree-stage-4.png);
+}
+
+#tree-legend .x-tree-legend-item .x-legend-description {
+    font-weight: bold;
+    font-size: 16px;
+    text-align: center;
+    color: #333;    
+}
+
+
+#user-congrats {    
+    padding: 10px;
+    width: 100%;
+    height: calc(100% - 68px - 83px);
+    background-color: #e5e5e5;
+    color: #333;
+    overflow: hidden;
+    
+    margin-top: 10px;
+}
+
+#user-congrats h2 {
+    margin-top: 40px;
+    font-size: 28px;
+}
+
+#user-congrats h2, #user-congrats .x-congrats-description {
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+#user-congrats .x-congrats-description {
+    font-size: 22px;
+}
+
 
 #results-row {
     height: 40px;
@@ -253,4 +379,9 @@ html, body {
     cursor: pointer;
     font-size: 20px;
     font-weight: bold;
+}
+
+#my-trees-user-stats .x-plant-button{
+    margin-top: 10px;    
+    width: calc(100% - 20px); /* padding */
 }

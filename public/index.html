@@ -17,7 +17,7 @@
         </script>
     </head>
 
-    <body class="x-logged-in">
+    <body class="x-logged-in x-action-home">
         <div id="wrapper">
             <div id="nav">
                 <div id="main-logo">
@@ -63,30 +63,81 @@
                 </div>
                 <div id="main-right-column">
                     <div id="welcome-row" class="x-row">
-                        <div class="x-intro">
+                        <div class="x-intro x-action-home-only">
                             <h1>Welcome to <span class="x-t-green">TreeifyHQ</span>!</h1>
                             <div class="x-slogan">
                                 Let's find a place to plant more trees
                             </div>
-                        </div>
-                        <div class="x-plant-button">
+                        </div>                        
+                        <div class="x-plant-button x-action-home-only">
                             <div class="x-icon x-icon-plant"></div>
                             <div class="x-btn-text">
                                 Plant a tree now!
                             </div>
                         </div>
-                    </div>
-                    <div id="esri-map">
-                        <div data-dojo-type="dijit/layout/BorderContainer" 
-                             data-dojo-props="design:'headline',gutters:false" 
-                             style="width: 100%; height: 100%; margin: 0;">
-                            <div id="map" 
-                                 data-dojo-type="dijit/layout/ContentPane" 
-                                 data-dojo-props="region:'center'"> 
+                        <div class="x-intro x-action-my-trees-only">
+                            <h1>My Trees</h1>
+                            <div class="x-slogan">
+                                Check how you've contributed by planting trees
                             </div>
                         </div>
                     </div>
-                    <div id="results-row" class="x-row">
+                    <div id="main-content-container" class="x-row">
+                        <div id="esri-map">
+                            <div data-dojo-type="dijit/layout/BorderContainer" 
+                                 data-dojo-props="design:'headline',gutters:false" 
+                                 style="width: 100%; height: 100%; margin: 0;">
+                                <div id="map" 
+                                     data-dojo-type="dijit/layout/ContentPane" 
+                                     data-dojo-props="region:'center'"> 
+                                </div>
+                            </div>
+                        </div>
+                        <div id="my-trees-user-stats" class="x-action-my-trees-only">
+                            <div id="tree-legend">
+                                <div class="x-tree-legend-item x-stage-1">
+                                    <div class="x-icon"></div>
+                                    <div class="x-legend-description">
+                                        1 - 6 Months
+                                    </div>
+                                </div>
+                                <div class="x-tree-legend-item x-stage-2">
+                                    <div class="x-icon"></div>
+                                    <div class="x-legend-description">
+                                        6 - 18 Months
+                                    </div>
+                                </div>
+                                <div class="x-tree-legend-item x-stage-3">
+                                    <div class="x-icon"></div>
+                                    <div class="x-legend-description">
+                                        18 - 60 Months
+                                    </div>
+                                </div>
+                                <div class="x-tree-legend-item x-stage-4">
+                                    <div class="x-icon"></div>
+                                    <div class="x-legend-description">
+                                        60+ Months
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="user-congrats">
+                                <h2>Congratulations!</h2>
+                                <div class="x-congrats-description">
+                                    The trees you've planted have generated 
+                                    <span class="x-t-orange-text">2019 lbs</span> of 
+                                    Oxygen allowing <span class="x-t-orange-text">122</span>
+                                    to breathe per year.
+                                </div>
+                            </div>
+                            <div class="x-plant-button x-t-blue-background">
+                                <div class="x-icon x-icon-plant"></div>
+                                <div class="x-btn-text">
+                                    Plant more trees
+                                </div>
+                            </div>
+                        </div>
+                    </div>                    
+                    <div id="results-row" class="x-row x-action-home-only">
                         <div class="x-results">
                             <div class="x-result-label x-t-green-text">
                                 <h2>Emisions reduced</h2>
@@ -106,7 +157,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div>        
 
         <script src="/js/lib/jquery-2.2.3.min.js"></script>
         <script src="https://js.arcgis.com/3.16/"></script>

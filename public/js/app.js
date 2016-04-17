@@ -3,8 +3,16 @@ var map;
 var config = {
     center: [
         -122.3321,
-        47.6062        
+        47.6062
     ]
+};
+
+var app = {
+    state: {
+        actionTab: 'action-home'
+    },
+    map: null,
+    init: init
 };
 
 require([
@@ -52,16 +60,21 @@ require([
             center: config.center,
             zoom: 13
         });
+        
+
+        app.map = map;
 
         map.on("load", function() {
             // hide the popup's ZoomTo link as it doesn't make sense for cluster features
             domStyle.set(query("a.action.zoomTo")[0], "display", "none");
-            
+
             var photos = esriRequest({
                 url: "data/1000-photos.json",
                 handleAs: "json"
             });
             photos.then(addClusters, error);
+
+            app.init();
         });
 
         function addClusters(resp) {
@@ -69,17 +82,18 @@ require([
             var wgs = new SpatialReference({
                 "wkid": 4326
             });
-            photoInfo.data = arrayUtils.map(resp, function(p) {                
+
+            photoInfo.data = arrayUtils.map(resp, function(p) {
                 var latlng = new Point(parseFloat(p.lng), parseFloat(p.lat), wgs);
                 var webMercator = webMercatorUtils.geographicToWebMercator(latlng);
-                
+
                 var attributes = {
                     "Caption": p.caption,
                     "Name": p.full_name,
                     "Image": p.image,
                     "Link": p.link
                 };
-                
+
                 return {
                     "x": webMercator.x,
                     "y": webMercator.y,
@@ -124,7 +138,7 @@ require([
                 "singleColor": "#888",
                 "singleTemplate": popupTemplate
             });
-            
+
             var defaultSym = new SimpleMarkerSymbol().setSize(4);
             var renderer = new ClassBreaksRenderer(defaultSym, "clusterCount");
 
@@ -174,5 +188,138 @@ require([
             }, this);
             map.addLayer(extents, 0);
         };
+
+        app.addClusters = addClusters;
+        app.cleanUp = cleanUp;
     });
 });
+
+
+function init() {
+    /*
+     * Aweful hack to make the widths work
+     */
+    $('#map').css({
+        position: 'inherit'
+    });
+
+    initEvents();
+}
+
+function initEvents() {
+    var actionButtons = $('.x-action');
+
+    actionButtons.click(function(e) {
+        var target = $(e.target).closest('.x-action'),
+                action = target.attr('id');
+
+
+        switch (action) {
+            case 'action-home':
+                initActionHome();
+                break;
+            case 'action-my-trees':
+                initActionMyTrees();
+                break;
+            case 'action-ranking':
+                initActionRanking();
+                break;
+            default:
+                console.log('Unknown action ', action);
+        }
+    });
+}
+
+function setBodyAction(action) {
+    var body = $(document.body);
+    
+    var actions = [
+        'action-home',
+        'action-my-trees',
+        'action-ranking'
+    ];
+    
+    actions.forEach(function(act){       
+       if (act != action) {
+           body.removeClass('x-' + act);
+       }
+    });
+    
+    body.addClass('x-' + action);  
+    $(window).trigger('resize');
+}
+
+function initActionHome(force) {
+    var action = 'action-home';
+
+    if (!force && app.state.actionTab == action) {
+        console.log('Action already clicked');
+        return;
+    }
+
+    var actionButtons = $('.x-action'),
+            actionBtn = $('#' + action);
+
+    actionButtons.removeClass('x-active');
+    actionBtn.addClass('x-active');
+
+    app.state.actionTab = action;
+    
+    setBodyAction(action);
+}
+
+function initActionMyTrees(force) {
+    var action = 'action-my-trees';
+
+    if (!force && app.state.actionTab == action) {
+        console.log('Action already clicked');
+        return;
+    }
+
+    var actionButtons = $('.x-action'),
+            actionBtn = $('#' + action);
+
+    actionButtons.removeClass('x-active');
+    actionBtn.addClass('x-active');
+
+    app.state.actionTab = action;
+    
+    setBodyAction(action);
+    
+    app.cleanUp();
+    
+    var url = '/data/1000-photos.json';    
+    $.ajax({
+        url: url,
+        success: function(response) {
+            app.addClusters(response);
+        },
+        error: function() {
+            console.log('Error in url ', url)
+        }
+    });
+}
+
+function initActionRanking(force) {
+    var action = 'action-ranking';
+
+    if (!force && app.state.actionTab == action) {
+        console.log('Action already clicked');
+        return;
+    }
+
+    var actionButtons = $('.x-action'),
+            actionBtn = $('#' + action);
+
+    actionButtons.removeClass('x-active');
+    actionBtn.addClass('x-active');
+
+    app.state.actionTab = action;
+    
+    setBodyAction(action);
+}
+
+
+function displayError(error) {
+    console.log(error);
+}

@@ -27,6 +27,20 @@ app.get('/trees', function(req, res) {
   services.getTrees(models.Trees, models.Types, cob);
 });
 
+app.get('/types', function(req, res) {
+  var cob = function (data) {
+    res.send(data);
+  }
+  services.getTypes(models.Types, cob);
+});
+
+app.get('/users', function(req, res) {
+  var cob = function (data) {
+    res.send(data);
+  }
+  services.getUsers(models.Users, cob);
+});
+
 app.listen(80, function () {
   console.log('Treeify app listening on port 80!');
 });

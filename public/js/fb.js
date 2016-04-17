@@ -25,9 +25,17 @@ function statusChangeCallback(response) {
 // Button.  See the onlogin handler attached to it in the sample
 // code below.
 function checkLoginState() {
-  FB.getLoginStatus(function(response) {
-    statusChangeCallback(response);
-  });
+  FB.getLoginStatus(
+    function(response) {
+      $.get(
+        "/login",
+        response,
+        function(data) {
+           console.log(data);
+        }
+      );
+    }
+  );
 }
 
 window.fbAsyncInit = function() {

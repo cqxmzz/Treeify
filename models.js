@@ -11,12 +11,10 @@ db.once('open', function() {
 //=========SCHEMAS=========
 
 var sessionsSchema = mongoose.Schema({
-  _id: String,
   u_id: String
 });
 
 var treesSchema = mongoose.Schema({
-  _id: String,
   type: String,
   location: {
     x: Number,
@@ -26,7 +24,6 @@ var treesSchema = mongoose.Schema({
 });
 
 var typesSchema = mongoose.Schema({
-  _id: String,
   name: String,
   o2_rate: Number,
   growth_rate: Number,
@@ -34,7 +31,6 @@ var typesSchema = mongoose.Schema({
 });
 
 var usersSchema = mongoose.Schema({
-  _id: String,
   name: String,
   email: String,
   type: Number,

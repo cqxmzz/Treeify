@@ -153,10 +153,9 @@ wizard.prototype.performRequest = function(num) {
     $.ajax({
         url: '/plant',
         method: 'post',
-        dataType: 'json',
-        data: JSON.stringify({
+        data: {
             type: me.tree_id
-        }),
+        },
         success: function() {
             if (num == me.num_trees) {
                 me.next();
@@ -750,6 +749,10 @@ function initEvents() {
         var wiz = new wizard();
         wiz.start();
     });
+
+    $('.x-top-contrib-button').click(function() {
+        initActionRanking(true);
+    });
 }
 
 function setBodyAction(action) {
@@ -798,6 +801,7 @@ function initActionHome(force) {
         url: url,
         success: function(response) {
             app.addClusters(response, app.map);
+            setOxygenReduced(response.length * config.treeTypes.pine.o2);
         },
         error: function() {
             console.log('Error in url ', url)
@@ -853,7 +857,7 @@ function initActionMyTrees(force) {
                 '<p>Thank you for making the world a better place</p>',
                 '</div>'
             ];
-            
+
             congratsDescription.append($(congratsHtml.join('')));
         }
     });
@@ -877,45 +881,45 @@ function initActionRanking(force) {
 
     var ranking = $('#ranking');
     ranking.empty();
-    
+
     setBodyAction(action);
-    
+
     $.ajax({
-       url: '/top-users',
-       success: function(response) {
-           var ind = response.individuals;
-           
-           var rankingHtml = [],
-               i = 1;
-           
-           ind.forEach(function(individual){
-               var html = [
-                   '<div class="x-rank-item">',
-                        '<div class="x-left-line"></div>',
-                        '<div class="x-name-num">',
-                            '<span class="x-num">',
-                                i,
-                            '</span>',
-                            '<span class="x-name">',
-                                individual.name,
-                            '</span>',
-                        '</div>',
-                        '<div class="x-trees-planted">',
-                            '<div class="x-tree-icon"></div>',
-                            '<div class="x-tree-num">',
-                                individual.num_trees,
-                            '</div>',
-                        '</div>',
-                   '</div>'
-               ];
-               
-               i++;
-               
-               rankingHtml.push(html.join(''));
-           });
-           
-           ranking.append($(rankingHtml.join('')));
-       }
+        url: '/top-users',
+        success: function(response) {
+            var ind = response.individuals;
+
+            var rankingHtml = [],
+                    i = 1;
+
+            ind.forEach(function(individual) {
+                var html = [
+                    '<div class="x-rank-item">',
+                    '<div class="x-left-line"></div>',
+                    '<div class="x-name-num">',
+                    '<span class="x-num">',
+                    i,
+                    '</span>',
+                    '<span class="x-name">',
+                    individual.name,
+                    '</span>',
+                    '</div>',
+                    '<div class="x-trees-planted">',
+                    '<div class="x-tree-icon"></div>',
+                    '<div class="x-tree-num">',
+                    individual.num_trees,
+                    '</div>',
+                    '</div>',
+                    '</div>'
+                ];
+
+                i++;
+
+                rankingHtml.push(html.join(''));
+            });
+
+            ranking.append($(rankingHtml.join('')));
+        }
     });
 }
 
@@ -941,4 +945,18 @@ function loginCallBack() {
         }
     });
 
+}
+
+function setOxygenReduced(num) {
+    var numStr = "" + num;
+
+    var nums = numStr.split('');
+
+    var div = $('.x-result-value');
+    div.empty();
+
+    nums.forEach(function(num) {
+        var html = '<span class="x-sq-num">' + num + '</span>';
+        div.append($(html));
+    });
 }

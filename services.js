@@ -55,11 +55,10 @@ exports.getTrees = function(Trees, Types, cob) {
  	  	var type = types[i];
  	  	for (j = 0; j < res.length; ++j) {
  	  	  data = res[j];
- 	  	  if (data['type'] === type['_id']) {
+ 	  	  if (data['type'] == type['_id']) {
  	  	  	data['type'] = type['name'];
  	  	  	var o2_rate = type['o2_rate'];
  	  	  	data.stats['oxygen'] = o2_rate;
- 	  	  	break;
  	  	  }
  	  	}
  	  }
@@ -68,6 +67,60 @@ exports.getTrees = function(Trees, Types, cob) {
   });
 }
 
+exports.getTreesForUser = function(Users, Trees, Types, user_id, cob) {
+  var res = [];
+  var i, j;
+  Users.find(function(err, users) {
+    if (err) 
+      return console.error(err);
+  
+  	var tree_ids = [];
+    for (i = 0; i < users.length; ++i) {
+      var user = users[i];
+      console.log(user._id);
+      if (user._id == user_id) {
+        tree_ids = user.trees;
+        break;
+      }
+    }
+    
+    Trees.find(function(err, trees) {
+      if (err) 
+        return console.error(err);
+  
+      for (i = 0; i < trees.length; ++i) {
+        var tree = trees[i];
+        if (tree_ids.indexOf(tree._id) >= 0) {
+          data = {};
+   	      data['location'] = tree['location'];
+   	      data['plant_time'] = tree['plant_time'];
+   	      data['img'] = null;
+   	      data['type'] = tree['type'];
+   	      data['stats'] = {};
+   	      res.push(data);
+        }
+      }
+      
+      Types.find(function(err, types) {
+ 	    if (err) 
+ 	      return console.error(err);
+  
+ 	    for (i = 0; i < types.length; ++i) {
+ 	      var type = types[i];
+ 	      for (j = 0; j < res.length; ++j) {
+ 	    	data = res[j];
+ 	    	if (data['type'] == type['_id']) {
+ 	    	  data['type'] = type['name'];
+ 	    	  var o2_rate = type['o2_rate'];
+ 	    	  data.stats['oxygen'] = o2_rate;
+ 	    	}
+ 	      }
+ 	    }
+ 	    cob(res);
+      });
+    });
+  });
+}
 
 exports.getTypes = function(Types, cob) {
   var res = [];
@@ -89,23 +142,36 @@ exports.getTypes = function(Types, cob) {
   });
 }
 
+exports.getProfile = function(Users, user_id, cob) {
+  Users.findById(user_id, function(err, user) {
+    if (err) 
+      return console.error(err);
+    data = {};
+    data['name'] = user['name'];
+    data['img'] = "";
+    cob(data);
+  });
+}
 
-exports.getUsers = function(Users, cob) {
-  var res = [];
-  var i;
-  Users.find(function(err, users) {
+exports.plantTree = function(Trees, Users, req, user_id) {
+  var tree = {
+  	location: req.body.location,
+  	type: req.body.type,
+  	plant_time: new Date().getTime(),
+  };
+  Trees.create(tree, function(err, tree_saved) {
     if (err) 
       return console.error(err);
 
-    for (i = 0; i < users.length; ++i) {
-      var user = users[i];
-      data = {};
-      data['name'] = user['name'];
-      data['email'] = user['email'];
-      data['type'] = user['type'];
-      data['trees'] = user['trees'];
-      res.push(data);
-    }
-    cob(res);
+    Users.findById(user_id, function(err, user) {
+      if (err)
+      	return console.error(err);
+
+      user.trees.push(tree_saved._id);
+      user.save(function(err) {
+      	if (err) 
+      	  return console.error(err);
+      });
+    }); 
   });
 }

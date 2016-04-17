@@ -9,15 +9,15 @@ var config = {
        'pine': {
             id: '123',
             name: 'Pine',
-            o2: 10,
-            co2: 15,
+            o2: 260,
+            co2: 48,
             img: ''
         },
         'oak': {
             id: '456',
             name: 'Oak',
-            o2: 10,
-            co2: 15
+            o2: 260,
+            co2: 48
         }        
     },
     treeAreas: {
@@ -130,8 +130,15 @@ wizard.prototype.end = function(el) {
     $('.x-modal').empty();
     $('.x-modal-background').removeClass('x-active');    
 }
+
 wizard.prototype.validate = function(el) {
     return true
+}
+
+wizard.prototype.send = function(el) {
+    $.ajax({
+        url: ''
+    });
 }
 
 wizard.prototype.showStep = function(step) {
@@ -366,8 +373,8 @@ wizard.prototype.showStep = function(step) {
         ];                
         
         buttonsHtml = [
-            '<div class="x-btn x-btn-next">',
-                'Next',
+            '<div class="x-btn x-btn-send">',
+                'Pay',
             '</div>'
         ];
         
@@ -464,6 +471,12 @@ wizard.prototype.showStep = function(step) {
             return;
         }
         
+        
+        if (btn.hasClass('x-btn-prev')) {
+            me.send();
+            return;
+        }        
+        
         if (btn.hasClass('x-btn-finish')) {
             me.end();
         }
@@ -534,12 +547,6 @@ require([
             // hide the popup's ZoomTo link as it doesn't make sense for cluster features
             domStyle.set(query("a.action.zoomTo")[0], "display", "none");
 
-//            var photos = esriRequest({
-//                url: "data/1000-photos.json",
-//                handleAs: "json"
-//            });
-//            photos.then(addClusters, error);
-
             app.init();
         });
         
@@ -571,15 +578,15 @@ require([
             });
 
             photoInfo.data = arrayUtils.map(resp, function(p) {
-                var latlng = new Point(parseFloat(p.lng), parseFloat(p.lat), wgs);
+                var latlng = new Point(p.location.y, p.location.x, wgs);
                 var webMercator = webMercatorUtils.geographicToWebMercator(latlng);
+                                
 
                 var attributes = {
-                    "Caption": p.caption,
-                    "Name": p.full_name,
-                    "Image": p.image,
-                    "Link": p.link
-                };
+                    "Caption": p.type,
+                    "Image": p.img,
+                    "Oxygen": 'aa'
+                };                                
 
                 return {
                     "x": webMercator.x,
@@ -587,20 +594,15 @@ require([
                     "attributes": attributes
                 };
             });
+            
+            console.log(photoInfo)
 
             // popupTemplate to work with attributes specific to this dataset
             var popupTemplate = new PopupTemplate({
                 "title": "",
                 "fieldInfos": [{
                         "fieldName": "Caption",
-                        visible: true
-                    }, {
-                        "fieldName": "Name",
-                        "label": "By",
-                        visible: true
-                    }, {
-                        "fieldName": "Link",
-                        "label": "On Instagram",
+                        label: 'Tree type',
                         visible: true
                     }],
                 "mediaInfos": [{
@@ -648,9 +650,7 @@ require([
                     cleanUp();
                 }
             });
-            
-            
-
+                       
             function cleanUp() {
                 map.infoWindow.hide();
                 clusterLayer.clearSingles();
@@ -696,6 +696,8 @@ function init() {
     });
 
     initEvents();
+    
+    initActionHome(true);
 }
 
 function initEvents() {
@@ -761,9 +763,22 @@ function initActionHome(force) {
     actionButtons.removeClass('x-active');
     actionBtn.addClass('x-active');
 
-    app.state.actionTab = action;
+    app.state.actionTab = action;        
 
     setBodyAction(action);
+    
+    
+    var url = '/trees';
+    $.ajax({
+        url: url,
+        success: function(response) {
+            console.log(response)
+            app.addClusters(response, app.map);
+        },
+        error: function() {
+            console.log('Error in url ', url)
+        }
+    });
 }
 
 function initActionMyTrees(force) {
@@ -787,17 +802,6 @@ function initActionMyTrees(force) {
     if (app.cleanUp){
         app.cleanUp();
     }
-
-    var url = '/data/1000-photos.json';
-    $.ajax({
-        url: url,
-        success: function(response) {
-            app.addClusters(response, app.map);
-        },
-        error: function() {
-            console.log('Error in url ', url)
-        }
-    });
 }
 
 function initActionRanking(force) {

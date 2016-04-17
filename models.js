@@ -34,7 +34,8 @@ var usersSchema = mongoose.Schema({
   name: String,
   email: String,
   type: Number,
-  trees: [String]
+  trees: [String],
+  img_url: String
 });
 
 //=========MODELS=========

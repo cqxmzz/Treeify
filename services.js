@@ -1,3 +1,7 @@
+exports.getUid = function(Sessions, session_id, cob) {
+
+}
+
 exports.getTopUsers = function(Users, cob) {
 	function desc(u1, u2){
 		return u2.trees.length - u1.trees.length;

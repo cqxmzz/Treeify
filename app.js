@@ -16,6 +16,13 @@ app.get('/', function (req, res) {
   res.send('Hello World!');
 });
 
+app.get('/top-users', function (req, res) {
+	var cob = function (top_users) {
+    res.send(top_users);
+  }
+  services.getTopUsers(models.Users, cob);
+});
+
 app.get('/trees', function(req, res) {
   var cob = function (data) {
   	res.send(data);

@@ -96,6 +96,15 @@ html, body {
     float: right;
 }
 
+#fb-login-button {
+    display: block;
+    overflow: hidden;
+    margin-top: 4px;
+    margin-right: 20px;
+    width: 180px;
+    height: 50px;
+}
+
 #menu-account-info {
     display: none;    
     overflow: hidden;
@@ -127,10 +136,6 @@ html, body {
 
 #menu-account-info .x-profile-info strong {
     display: inline;
-}
-
-.x-logged-in .x-login-button {
-    display: none;
 }
 
 #main-container {

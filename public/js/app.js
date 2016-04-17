@@ -874,7 +874,48 @@ function initActionRanking(force) {
 
     app.state.actionTab = action;
 
+    var ranking = $('#ranking');
+    ranking.empty();
+    
     setBodyAction(action);
+    
+    $.ajax({
+       url: '/top-users',
+       success: function(response) {
+           var ind = response.individuals;
+           
+           var rankingHtml = [],
+               i = 1;
+           
+           ind.forEach(function(individual){
+               var html = [
+                   '<div class="x-rank-item">',
+                        '<div class="x-left-line"></div>',
+                        '<div class="x-name-num">',
+                            '<span class="x-num">',
+                                i,
+                            '</span>',
+                            '<span class="x-name">',
+                                individual.name,
+                            '</span>',
+                        '</div>',
+                        '<div class="x-trees-planted">',
+                            '<div class="x-tree-icon"></div>',
+                            '<div class="x-tree-num">',
+                                individual.num_trees,
+                            '</div>',
+                        '</div>',
+                   '</div>'
+               ];
+               
+               i++;
+               
+               rankingHtml.push(html.join(''));
+           });
+           
+           ranking.append($(rankingHtml.join('')));
+       }
+    });
 }
 
 

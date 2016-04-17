@@ -199,7 +199,7 @@ exports.getProfile = function(Users, user_id, cob) {
       return console.error(err);
     data = {};
     data['name'] = user['name'];
-    data['img'] = user['image_url'];
+    data['img'] = user['img_url'];
     cob(data);
   });
 }

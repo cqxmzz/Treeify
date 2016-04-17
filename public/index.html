@@ -16,25 +16,24 @@
         </script>
     </head>
     <body class="x-logged-in x-action-home">
-        <div>
-            <a style="font-size:40px;"
-                href="javascript:void(0)"
-                onclick=" window.open('/auth/facebook','',
-                    'scrollbars=yes,menubar=no,height=500,width=600,resizable=yes,toolbar=no,location=no,status=no')">
-                Welcome! Please log in.
-            </a>
-        </div>
         <div id="wrapper">
             <div id="nav">
                 <div id="main-logo">
                     <img src='/img/logo.png' alt="Treeify Logo" />
                 </div>
                 <div id="account-wrapper">
+                    <div id="fb-login-button">
+                        <a href="javascript:void(0)"
+                            onclick=" window.open('/auth/facebook','',
+                                'scrollbars=yes,menubar=no,height=500,width=600,resizable=yes,toolbar=no,location=no,status=no')">
+                            <img src="/img/icons/fblogin.png">
+                        </a>
+                    </div>
                     <div id="menu-account-info">
                         <div class="x-profile-pic"></div>
                         <div class="x-profile-info">
                             <div>
-                                Hi <strong>Kelly</strong>,
+                                Hi <strong id="user-name">Kelly</strong>,
                             </div>
                             <div>
                                 Welcome back!

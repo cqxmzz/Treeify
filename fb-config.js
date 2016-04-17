@@ -35,13 +35,11 @@ exports.registerStratergy = function(models, services) {
 }
 
 passport.serializeUser(function(session_id, done) {
-  console.log("serializing: " + session_id);
   done(null, session_id);
 });
 
 // used to deserialize the user
 passport.deserializeUser(function(session_id, done) {
-  console.log("de-serializing: " + session_id);
   done(null, session_id);
 });
 

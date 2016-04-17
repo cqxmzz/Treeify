@@ -619,5 +619,20 @@ function displayError(error) {
 }
 
 function loginCallBack() {
+    var loginButton = document.getElementById("fb-login-button");
+    loginButton.style.display = "none";
+    var userName = document.getElementById("user-name");
+    var pic = document.getElementById("menu-account-info").getElementsByClassName("x-profile-pic");
+    var url = '/profile';
+    $.ajax({
+        url: url,
+        success: function(response) {
+            userName.textContent = response.name;
+            pic[0].style.backgroundImage = "url('" + response.img +"')";
+        },
+        error: function() {
+            console.log('Error in url ', url)
+        }
+    });
     
 }

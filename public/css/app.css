@@ -409,12 +409,102 @@ html, body {
 
 .x-modal-background .x-window {    
     margin: 0 auto;    
-    width: 500px;
+    width: 700px;
     overflow: hidden;
+    background-color: #fff;
 }
 
 .x-map-drop {
+    height: 300px;    
+}
+
+.x-window .x-win-title {
     width: 100%;
-    height: 300px;
-    margin: 10px;
+    padding: 15px 0;
+    overflow: hidden;
+    text-align: center;
+    font-weight: bold;
+    font-size: 22px;
+}
+
+.x-window .x-win-description {
+    color: #333;
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.x-window .x-win-body {
+    margin: 30px;
+}
+
+.x-window .x-win-main {
+    overflow: hidden;
+}
+
+.x-window .x-steps {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.x-window .x-steps .x-step {
+    display: inline-block;
+    margin-right: 5px;
+    width: 10px;
+    height: 10px;
+    border-radius: 10px;
+    background-color: #ccc;
+    overflow: hidden;
+}
+
+.x-window .x-steps .x-step.x-active {
+    background-color: #333;
+}
+
+.x-window .x-win-buttons {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.x-window .x-btn {
+    display: inline-block;
+    padding: 15px 20px;
+    background-color: #005b27; 
+    margin-right: 10px;
+    font-weight: bold;
+    font-size: 18px;
+    
+    cursor: pointer;
+}
+
+
+.x-window .x-options {
+    overflow: hidden;
+}
+
+.x-window .x-option {
+    color: #333;
+    overflow: hidden;
+    padding: 10px;
+}
+
+.x-window .x-option.x-row-0 {
+    background-color: #ddd;
+}
+
+.x-window .x-option.x-row-1 {
+    background-color: #efefef;
+}
+
+.x-window .x-option .x-form-part {
+    float: left;
+    font-size: 20px;
+}
+
+.x-window .x-option .x-form-part .x-radio-value {
+    display: inline-block;
+    margin-left: 10px;
+}
+
+.x-window .x-option .x-explanation-part {
+    float: right;
 }

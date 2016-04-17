@@ -209,6 +209,7 @@ exports.plantTree = function(Trees, Users, req, user_id) {
   	location: req.body.location,
   	type: req.body.type,
   	plant_time: new Date().getTime(),
+  	img_url: ""
   };
   Trees.create(tree, function(err, tree_saved) {
     if (err) 

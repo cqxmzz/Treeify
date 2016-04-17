@@ -47,7 +47,7 @@ exports.getTopUsers = function(Users, cob) {
 	});
 }
 
-exports.getLogin = function(Users, Sessions, name, email, cob) {
+exports.getLogin = function(Users, Sessions, name, email, img_url, cob) {
 	// find sid by uid, if not exist, create a session
 	function findSessionIdByUserId(uid) {
 		Sessions.findOne({'u_id': uid}, function(err, session) {
@@ -69,7 +69,8 @@ exports.getLogin = function(Users, Sessions, name, email, cob) {
 				'name': name,
 				'email':email,
 				'type': 0,
-				'trees': []
+				'trees': [],
+				'img_url': img_url
 			}, function(err, new_user) {
 				findSessionIdByUserId(new_user._id);
 			});
@@ -91,7 +92,7 @@ exports.getTrees = function(Trees, Types, cob) {
    	  data = {};
    	  data['location'] = tree['location'];
    	  data['plant_time'] = tree['plant_time'];
-   	  data['img'] = null;
+   	  data['img'] = tree['img_url'];
    	  data['type'] = tree['type'];
    	  data['stats'] = {};
    	  res.push(data);
@@ -198,7 +199,7 @@ exports.getProfile = function(Users, user_id, cob) {
       return console.error(err);
     data = {};
     data['name'] = user['name'];
-    data['img'] = "";
+    data['img'] = user['image_url'];
     cob(data);
   });
 }
@@ -208,6 +209,7 @@ exports.plantTree = function(Trees, Users, req, user_id) {
   	location: req.body.location,
   	type: req.body.type,
   	plant_time: new Date().getTime(),
+  	img_url: ""
   };
   Trees.create(tree, function(err, tree_saved) {
     if (err) 

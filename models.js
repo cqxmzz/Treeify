@@ -20,7 +20,8 @@ var treesSchema = mongoose.Schema({
     x: Number,
     y: Number
   },
-  plant_time: Number
+  plant_time: Number,
+  img_url: String
 });
 
 var typesSchema = mongoose.Schema({
@@ -34,7 +35,8 @@ var usersSchema = mongoose.Schema({
   name: String,
   email: String,
   type: Number,
-  trees: [String]
+  trees: [String],
+  img_url: String
 });
 
 //=========MODELS=========

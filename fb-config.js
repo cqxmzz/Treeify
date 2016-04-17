@@ -23,6 +23,7 @@ exports.registerStratergy = function(models, services) {
             profile._json.email ?
               profile._json.email :
               profile._json.id + "@facebook.com",
+            profile._json.picture.data.url,
             function(session_id) {
               console.log("session created: " + session_id);
               done(null, session_id);

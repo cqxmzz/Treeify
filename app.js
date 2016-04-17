@@ -90,6 +90,7 @@ app.post('/plant', function(req, res) {
     user_id = data;
     services.plantTree(models.Trees, models.Users, req, user_id);
   });
+  res.send("success");
 });
 
 app.listen(80, function () {

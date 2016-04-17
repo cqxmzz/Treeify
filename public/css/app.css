@@ -385,3 +385,32 @@ html, body {
     margin-top: 10px;    
     width: calc(100% - 20px); /* padding */
 }
+
+.x-modal-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    display: table;
+    
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.x-modal-background .x-modal {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.x-modal-background .x-window {    
+    margin: 0 auto;    
+    width: 500px;
+    overflow: hidden;
+}
+
+.x-map-drop {
+    width: 100%;
+    height: 300px;
+    margin: 10px;
+}

@@ -4,16 +4,188 @@ var config = {
     center: [
         -122.3321,
         47.6062
-    ]
+    ],
+    treeAreas: {
+        1: [-122.3321, 47.6062],
+        2: [-125.3321, 46.6062],
+        3: [-123.3321, 41.6062],
+        4: [-122.4321, 47.6062]
+    }
 };
 
 var app = {
     state: {
         actionTab: 'action-home'
     },
+    classes: {},
     map: null,
     init: init
 };
+
+function emptyFn() {
+
+}
+
+var wizard = function() {
+    this.step = 0;
+    this.area = null;
+    this.num_trees = 0;
+    this.credit_card_num = null;
+    this.credit_card_name = null;
+    this.credit_card_expire_month = null;
+    this.credit_card_expire_day = null;
+    this.cvv = null;
+
+    this.started = false;
+};
+
+wizard.prototype.statics = {
+    steps: [1, 2, 3, 4]
+};
+
+wizard.prototype.start = function() {
+    this.step = 1;
+    this.started = true
+    this.showStep(this.step);
+}
+
+wizard.prototype.back = function() {
+    if (!this.started) {
+        console.log('Have not started');
+        return
+    }
+
+    if (this.step <= this.statics.steps[0]) {
+        console.log('Cant go back. First step');
+        return;
+    }
+
+    this.step--;
+    this.showStep(this.step);
+}
+
+wizard.prototype.next = function() {
+    if (!this.started) {
+        console.log('Have not started');
+        return
+    }
+
+    var num_steps = this.statics.steps.length
+
+    if (this.step >= this.statics.steps[num_steps - 1]) {
+        console.log('Reached last step. Can not go forward');
+        return;
+    }
+
+    this.step++;
+    this.showStep(this.step);
+}
+
+wizard.prototype.validate = function(el) {
+    return true
+}
+
+wizard.prototype.showStep = function(step) {
+    var me = this;
+    
+    if (this.statics.steps.indexOf(step) == -1) {
+        console.log('Invalid step');
+        return
+    }
+
+    var titleHtml = [],
+            descriptionHtml = [],
+            mainHtml = [],
+            buttonsHtml = []
+            fn = emptyFn;
+
+    if (step == 1) {
+        titleHtml = [
+            'Plan a tree'
+        ];
+
+        descriptionHtml = [
+            '<div class="x-description">',
+            'Drop pins where you want to plant',
+            '</div>'
+        ];
+
+        mainHtml = [
+            '<div class="x-map-drop">',
+                '<div data-dojo-type="dijit/layout/BorderContainer" ',
+                    'data-dojo-props="design:\'headline\',gutters:false" ',
+                    'style="width: 100%; height: 100%; margin: 0;">',
+                    '<div id="map-drop" ',
+                         'data-dojo-type="dijit/layout/ContentPane"',
+                         'data-dojo-props="region:\'center\'"> ',
+                    '</div>',
+                '</div>',
+            '</div>'                        
+        ];
+        
+        buttonsHtml = [
+            '<div class="x-btn x-btn-next">',
+                'Next',
+            '</div>'
+        ];
+
+        fn = function(win) {            
+            var newMap = new app.classes.Map('map-drop', {
+                basemap: "oceans",
+                center: config.center,
+                zoom: 13
+            });
+
+            newMap.on("load", function() {                
+                $.each(config.treeAreas, function(key, value) {
+                   app.addPoint(value, newMap);                                      
+                });
+            });
+        }
+    }
+    
+    // @todo
+    var html = [
+        '<div class="x-window">',
+            '<div class="x-win-title">',
+                titleHtml.join(''),
+            '</div>',
+            '<div class="x-win-description>',
+                descriptionHtml.join(''),
+            '</div>',
+            '<div class="x-win-body">',
+                mainHtml.join(''),
+            '</div>',
+            '<div class="x-win-buttons">',
+                buttonsHtml.join(''),
+            '</div>',
+        '</div>'
+    ];
+    
+    console.log(html.join(''))
+    
+    var el = $(html.join(''));  
+    
+    
+    el.find('.x-btn').click(function(){
+        var btn = $(this);
+        
+        if (btn.hasClass('x-btn-next')){
+            if (me.validate(el)) {
+                me.next();
+            }            
+        }
+    });
+    
+    var modal = $('.x-modal');
+    
+    modal.empty();
+    modal.append(el);
+    
+    setTimeout(function(){
+        fn(el);
+    }, 10);    
+}
 
 require([
     "dojo/parser",
@@ -60,24 +232,46 @@ require([
             center: config.center,
             zoom: 13
         });
-        
+
 
         app.map = map;
+        
+        app.classes.Map = Map
 
         map.on("load", function() {
             // hide the popup's ZoomTo link as it doesn't make sense for cluster features
             domStyle.set(query("a.action.zoomTo")[0], "display", "none");
 
-            var photos = esriRequest({
-                url: "data/1000-photos.json",
-                handleAs: "json"
-            });
-            photos.then(addClusters, error);
+//            var photos = esriRequest({
+//                url: "data/1000-photos.json",
+//                handleAs: "json"
+//            });
+//            photos.then(addClusters, error);
 
             app.init();
         });
+        
+        
+        //@todo
+        function addPoint(geo, map) {
+            var markerSymbol = new SimpleMarkerSymbol();
+            
+            var wgs = new SpatialReference({
+                "wkid": 4326
+            });
+            
+            var latlng = new Point(parseFloat(geo[0]), parseFloat(geo[1]), wgs);
+            var webMercator = webMercatorUtils.geographicToWebMercator(latlng);
 
-        function addClusters(resp) {
+            var a = {
+                "x": webMercator.x,
+                "y": webMercator.y
+            };
+            
+            map.graphics.add(new Graphic(a, markerSymbol));
+        }
+
+        function addClusters(resp, map) {
             var photoInfo = {};
             var wgs = new SpatialReference({
                 "wkid": 4326
@@ -190,6 +384,7 @@ require([
         };
 
         app.addClusters = addClusters;
+        app.addPoint = addPoint;
         app.cleanUp = cleanUp;
     });
 });
@@ -232,20 +427,20 @@ function initEvents() {
 
 function setBodyAction(action) {
     var body = $(document.body);
-    
+
     var actions = [
         'action-home',
         'action-my-trees',
         'action-ranking'
     ];
-    
-    actions.forEach(function(act){       
-       if (act != action) {
-           body.removeClass('x-' + act);
-       }
+
+    actions.forEach(function(act) {
+        if (act != action) {
+            body.removeClass('x-' + act);
+        }
     });
-    
-    body.addClass('x-' + action);  
+
+    body.addClass('x-' + action);
     $(window).trigger('resize');
 }
 
@@ -264,7 +459,7 @@ function initActionHome(force) {
     actionBtn.addClass('x-active');
 
     app.state.actionTab = action;
-    
+
     setBodyAction(action);
 }
 
@@ -283,12 +478,12 @@ function initActionMyTrees(force) {
     actionBtn.addClass('x-active');
 
     app.state.actionTab = action;
-    
+
     setBodyAction(action);
-    
+
     app.cleanUp();
-    
-    var url = '/data/1000-photos.json';    
+
+    var url = '/data/1000-photos.json';
     $.ajax({
         url: url,
         success: function(response) {
@@ -315,7 +510,7 @@ function initActionRanking(force) {
     actionBtn.addClass('x-active');
 
     app.state.actionTab = action;
-    
+
     setBodyAction(action);
 }
 

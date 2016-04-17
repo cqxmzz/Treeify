@@ -617,3 +617,7 @@ function initActionRanking(force) {
 function displayError(error) {
     console.log(error);
 }
+
+function loginCallBack() {
+    
+}

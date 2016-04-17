@@ -153,6 +153,7 @@ wizard.prototype.performRequest = function(num) {
     $.ajax({
         url: '/plant',
         method: 'post',
+        dataType: 'json',
         data: JSON.stringify({
             type: me.tree_id
         }),

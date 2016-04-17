@@ -47,6 +47,14 @@ app.get('/profile', function(req, res) {
   });
 });
 
+app.get('/login', function(req, res) {
+  var name = 'Qiming Chen';
+  var email = 'simoncqm@gmail.com';
+  services.getLogin(models.Users, name, email, function (data) {
+    res.send(data);
+  });
+});
+
 app.post('/plant', function(req, res) {
   console.log(req);
   var user_id = '5712a546e4b065a8c4d713c6';

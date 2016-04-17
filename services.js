@@ -92,7 +92,7 @@ exports.getTrees = function(Trees, Types, cob) {
    	  data = {};
    	  data['location'] = tree['location'];
    	  data['plant_time'] = tree['plant_time'];
-   	  data['img'] = null;
+   	  data['img'] = tree['img_url'];
    	  data['type'] = tree['type'];
    	  data['stats'] = {};
    	  res.push(data);

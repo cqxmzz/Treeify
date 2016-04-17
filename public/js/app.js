@@ -247,13 +247,13 @@ wizard.prototype.showStep = function(step) {
 
                 target.addClass('x-selected');
 
-                var tree = config.treeTypes.pine;
+                var tree = 'pine';
 
                 if (target.hasClass('x-oak')) {
-                    tree = config.treeTypes.oak
+                    tree = 'oak'
                 }
 
-                me.tree_id = tree.id;
+                me.tree_id = tree;
                 me.co2_rate = tree.co2;
                 me.o2_rate = tree.o2;
             });

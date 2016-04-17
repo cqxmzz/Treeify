@@ -50,7 +50,7 @@ app.get('/profile', function(req, res) {
 app.get('/login', function(req, res) {
   var name = 'Qiming Chen';
   var email = 'simoncqm@gmail.com';
-  services.getLogin(models.Users, name, email, function (data) {
+  services.getLogin(models.Users, models.Sessions, name, email, function (data) {
     res.send(data);
   });
 });

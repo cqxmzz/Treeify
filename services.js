@@ -29,6 +29,38 @@ exports.getTopUsers = function(Users, cob) {
 	});
 }
 
+exports.getLogin = function(Users, Sessions, name, email, cob) {
+	// find sid by uid, if not exist, create a session
+	function findSessionIdByUserId(uid) {
+		Sessions.findOne({'u_id': uid}, function(err, session) {
+			if (session == null) {
+				Sessions.create({'u_id': uid}, function(err, new_session) {
+					cob(new_session._id);
+				});
+			} else {
+				cob(session._id);
+			}
+		});
+	}
+
+	// find uid by email, if not exist, create a user
+	Users.findOne({'email': email}, '_id', function(err, user) {
+		// if not exist, create a user
+		if (user == null) {
+			Users.create({
+				'name': name,
+				'email':email,
+				'type': 0,
+				'trees': []
+			}, function(err, new_user) {
+				findSessionIdByUserId(new_user._id);
+			});
+		} else {
+			findSessionIdByUserId(user._id);
+		}
+	});
+}
+
 exports.getTrees = function(Trees, Types, cob) {
   var res = [];
   var i, j;

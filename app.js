@@ -16,6 +16,10 @@ app.get('/', function (req, res) {
   res.send('Hello World!');
 });
 
+app.get('/test', function (req, res) {
+  res.send('test');
+});
+
 app.get('/top-users', function (req, res) {
 	var cob = function (top_users) {
     res.send(top_users);

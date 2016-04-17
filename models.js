@@ -53,35 +53,35 @@ exports.Users = Users;
 
 //=========LOGGING=========
 
-Sessions.find(function (err, sessions) {
-  if (err) 
-    return console.error(err);
-  console.log();
-  console.log("Sessions:");
-  console.log(sessions);
-})
+// Sessions.find(function (err, sessions) {
+//   if (err) 
+//     return console.error(err);
+//   console.log();
+//   console.log("Sessions:");
+//   console.log(sessions);
+// })
 
-Trees.find(function (err, trees) {
-  if (err) 
-    return console.error(err);
-  console.log();
-  console.log("Trees:");
-  console.log(trees);
-})
+// Trees.find(function (err, trees) {
+//   if (err) 
+//     return console.error(err);
+//   console.log();
+//   console.log("Trees:");
+//   console.log(trees);
+// })
 
-Types.find(function (err, types) {
-  if (err) 
-    return console.error(err);
-  console.log();
-  console.log("Types:");
-  console.log(types);
-})
+// Types.find(function (err, types) {
+//   if (err) 
+//     return console.error(err);
+//   console.log();
+//   console.log("Types:");
+//   console.log(types);
+// })
 
-Users.find(function (err, users) {
-  if (err) 
-    return console.error(err);
-  console.log();
-  console.log("Users:");
-  console.log(users);
-})
+// Users.find(function (err, users) {
+//   if (err) 
+//     return console.error(err);
+//   console.log();
+//   console.log("Users:");
+//   console.log(users);
+// })
 

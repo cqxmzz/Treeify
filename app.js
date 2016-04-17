@@ -16,10 +16,6 @@ app.get('/', function (req, res) {
   res.send('Hello World!');
 });
 
-app.get('/', function (req, res) {
-  res.send('Hello World!');
-});
-
 app.get('/trees', function(req, res) {
   var cob = function (data) {
   	res.send(data);

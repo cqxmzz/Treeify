@@ -2,23 +2,255 @@ html, body {
     height: 100%; 
     width: 100%; 
     margin: 0; 
-    padding: 0; 
+    padding: 0;
+    
+    color: #fff;
+}
+
+.x-icon {
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 16px;
+    height: 16px;
+}
+.x-t-green-text {
+    color: #005b27;
+}
+
+.x-t-green-background {
+    background-color: #005b27;
 }
 
 .esriViewPopup .gallery { 
     margin: 0 auto !important; 
 }
 
-#esri-map {
-    width: 80%;
+#wrapper {
+    width: 100%;
+    min-width: 1024px;
+    overflow: hidden;
+    height: 100%;
+}
+
+#wrapper.x-static {
+    width: 1024px;
     margin: 0 auto;
+}
+
+#nav {
+    width: 100%;
+    min-width: 1024px;
+    height: 60px;
+    background-color: #005b27;
+    overflow: hidden;
+}
+
+#main-logo {
+    float: left;
+    height: 100%;
+}
+
+#main-logo img {
+    height: 35px;
+    margin-top: 12px;
+    margin-left: 20px;
+}
+
+#account-wrapper {
+    float: right;
+}
+
+#menu-account-info {
+    display: none;    
+    overflow: hidden;
+    margin-right: 20px;
+}
+
+.x-logged-in #menu-account-info{
+    display: block;
+}
+
+#menu-account-info .x-profile-pic {
+    margin-top: 5px;
+    width: 50px;
+    height: 50px;
+    overflow: hidden;
+    border-radius: 25px;
+    background-size: cover;
+    
+    background-repeat: no-repeat;
+    background-image: url('/img/profile_pic.jpg');
+    float: left;
+}
+
+#menu-account-info .x-profile-info {
+    float: left;    
+    margin-left: 15px;
+    margin-top: 10px;
+}
+
+#menu-account-info .x-profile-info strong {
+    display: inline;
+}
+
+.x-logged-in .x-login-button {
+    display: none;
+}
+
+#main-container {
+    height: calc(100% - 60px);
+    overflow: hidden;
+}
+
+#main-left-column {
+    height: 100%;
+    width: 80px;
+    background: #e5e5e5;
+    float: left;
+}
+
+.x-action:first-child {
+    margin-top: 50px;
+}
+
+.x-action {
+    width: 100%;    
+    margin-bottom: 30px;
+}
+
+.x-action .x-action-pic {
+    margin: 0 auto;
+    width: 60px;
+    height: 60px;
+    overflow: hidden;
+    background-size: cover;
+    background-repeat: no-repeat;
+    border-radius: 30px;
+    background-color: #999;    
+}
+
+.x-action.x-active .x-action-pic {
+    background-color: #4783bf;
+}
+
+.x-action .x-action-description {
+    color: #333;
+    font-weight: bold;
+    margin-top: 10px;
+    text-align: center;
+}
+
+#main-right-column {
+    padding-left: 50px;
+    padding-right: 50px;
     height: 100%;
     overflow: hidden;
+}
+
+.x-row {
+    overflow: hidden
+}
+
+#welcome-row {
+    margin-top: 50px;
+    height: 60px;
+    overflow: hidden;
+}
+
+.x-intro {
+    float: left;
+}
+
+.x-plant-button {
+    float: right;
+    overflow: hidden;
+    padding: 10px;
+    background-color: #005b27;
     
+    cursor: pointer;
+}
+
+.x-plant-button .x-icon-plant {
+    float: left;
+    width: 23px;
+    height: 23px;
+    background-image: url(/img/icons/leaves.png);    
+}
+
+.x-plant-button .x-btn-text {
+    font-size: 20px;
+    float: left;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+.x-intro h1 {
+    color: #333;
+    margin: 0;
+}
+
+.x-intro h1 .x-t-green {
+    color: #005b27;
+}
+
+.x-intro .x-slogan {
+    color: #888;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+#esri-map {
+    margin: 20px 0;
+    overflow: hidden;    
     position: relative;
+    height: calc(100% - 200px);
 }
 
 #map{ 
     margin: 0; 
     padding: 0; 
+}
+
+#results-row {
+    height: 40px;
+    overflow: hidden;
+}
+
+.x-results {
+    float: left;
+    overflow: hidden;
+}
+
+.x-results .x-result-label {
+    float: left;
+}
+
+.x-results .x-result-label h2{
+    margin: 0;
+    padding: 0;
+    font-size: 18px;
+}
+
+.x-results .x-result-value {
+    float: left;
+    margin-left: 10px;
+}
+
+.x-results .x-result-value .x-sq-num {
+    display: inline-block;
+    margin: 0 3px;
+    padding: 8px;
+    background-color: #e5e5e5;
+    
+    color: #000;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.x-top-contrib-button {
+    float: right;    
+    padding: 8px;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: bold;
 }

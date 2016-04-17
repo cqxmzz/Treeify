@@ -444,6 +444,7 @@ html, body {
 
 .x-window .x-win-main {
     overflow: hidden;
+    min-height: 300px;
 }
 
 .x-window .x-steps {
@@ -512,4 +513,61 @@ html, body {
 
 .x-window .x-option .x-explanation-part {
     float: right;
+}
+
+.x-window .x-option.x-other .x-explanation-part input[type=text] {    
+    width: 260px;
+    height: 18px;
+    display: none;
+}
+
+.x-window .x-option.x-other.x-checked .x-explanation-part input[type=text] {    
+    display: block;
+}
+
+.x-payment-form-holder {
+    width: 90%;
+    margin: 0 auto;
+}
+
+.x-payment-form-holder .x-form-row {
+    margin-top: 10px;
+}
+
+.x-payment-form-holder .x-form-row input[type=text]{
+    width: 100%;
+    height: 20px;
+}
+
+.x-payment-form-holder .x-form-row.x-divided input, 
+.x-payment-form-holder .x-form-row.x-divided select {
+    width: calc(33% - 10px);
+    margin-right: 5px;
+}
+
+.x-plant-congrats {
+    color: #333;
+}
+
+.x-tree-img {
+    width: 40%;
+    height: 300px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    border: 1px solid #aaa;
+}
+
+.x-tree-img.x-selected {
+    border: 1px solid #333;
+}
+
+.x-tree-img.x-pine{
+    float: left;
+    background-image: url(http://preview.turbosquid.com/Preview/2014/05/24__20_36_58/pine%20tree%20b.jpgde883924-59d3-4718-94a1-c20665306fb3Original.jpg);
+}
+
+.x-tree-img.x-oak{
+    float: right;
+    background-image: url(http://images.fast-growing-trees.com/images/P/Live-Oak-Tree-450w.jpg);
 }

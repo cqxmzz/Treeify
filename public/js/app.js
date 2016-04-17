@@ -5,6 +5,21 @@ var config = {
         -122.3321,
         47.6062
     ],
+    treeTypes: {
+       'pine': {
+            id: '123',
+            name: 'Pine',
+            o2: 10,
+            co2: 15,
+            img: ''
+        },
+        'oak': {
+            id: '456',
+            name: 'Oak',
+            o2: 10,
+            co2: 15
+        }        
+    },
     treeAreas: {
         1: [-122.3321, 47.6062],
         2: [-125.3321, 46.6062],
@@ -33,14 +48,18 @@ var wizard = function() {
     this.credit_card_num = null;
     this.credit_card_name = null;
     this.credit_card_expire_month = null;
-    this.credit_card_expire_day = null;
-    this.cvv = null;
+    this.credit_card_expire_year = null;
+    this.credit_card_cvc = null;
+        
+    this.co2_rate = 0;
+    this.o2_rate = 0
+    this.tree_id = null;
 
     this.started = false;
 };
 
 wizard.prototype.statics = {
-    steps: [1, 2, 3, 4],
+    steps: [1, 2, 3, 4, 5],
     num_trees: [
         {
             num: 1,
@@ -68,6 +87,10 @@ wizard.prototype.statics = {
 wizard.prototype.start = function() {
     this.step = 1;
     this.started = true
+    
+    $('.x-modal').empty();
+    $('.x-modal-background').addClass('x-active');
+    
     this.showStep(this.step);
 }
 
@@ -103,6 +126,10 @@ wizard.prototype.next = function() {
     this.showStep(this.step);
 }
 
+wizard.prototype.end = function(el) {    
+    $('.x-modal').empty();
+    $('.x-modal-background').removeClass('x-active');    
+}
 wizard.prototype.validate = function(el) {
     return true
 }
@@ -167,7 +194,48 @@ wizard.prototype.showStep = function(step) {
                 });
             });
         }
-    } else if(step == 2) {
+    } else if (step == 2) {
+        descriptionHtml = [
+            '<div class="x-description">',
+                'Click on the type of tree that you want to plant',                
+            '</div>'            
+        ];
+        
+        mainHtml = [
+            '<div class="x-tree-chooser">',
+                '<div class="x-tree-img x-pine"></div>',
+                '<div class="x-tree-img x-oak"></div>',
+            '</div>'
+        ];
+        
+        buttonsHtml = [
+            '<div class="x-btn x-btn-next">',
+                'Next',
+            '</div>'
+        ];
+        
+        fn = function(win) {
+            var trees = win.find('.x-tree-img');               
+            
+            trees.click(function(){
+                trees.removeClass('x-selected');                
+                var target = $(this);
+                
+                target.addClass('x-selected');
+                
+                var tree = config.treeTypes.pine;                                
+                
+                if (target.hasClass('x-oak')) {
+                    tree = config.treeTypes.oak
+                }
+                
+                me.tree_id = tree.id;
+                me.co2_rate = tree.co2;
+                me.o2_rate = tree.o2;
+            });
+        }
+        
+    } else if(step == 3) {
         descriptionHtml = [
             '<div class="x-description">',
                 'How many trees to you want to plant in this area?',
@@ -205,6 +273,21 @@ wizard.prototype.showStep = function(step) {
             
             radios.push(radio.join(''))
         });
+        
+        var cls = i % 2;
+        var otherRadio = [
+            '<div class="x-option x-other x-row-' + cls + '">',
+                '<div class="x-form-part">',
+                    '<input type="radio" name="num-trees" value="0"/>',
+                    '<span class="x-radio-value">Other</span>',
+                '</div>',
+                '<div class="x-explanation-part">',
+                    '<input type="text" name="other-num" placeholder="Enter number here" />',
+                '</div>',
+            '</div>'
+        ];
+        
+        radios.push(otherRadio.join(''));
 
         mainHtml = [
             '<form class="x-num-trees-selector">',
@@ -213,11 +296,117 @@ wizard.prototype.showStep = function(step) {
         ];
         
         buttonsHtml = [
-            '<div class="x-btn x-btn-prev">',
-                'Next',
-            '</div>',
             '<div class="x-btn x-btn-next">',
                 'Next',
+            '</div>'
+        ];
+        
+        fn = function(win){
+            var radios = win.find('.x-option input[type=radio]'),
+                otherRadio = win.find('.x-other input[type=radio]'),
+                otherOption = win.find('.x-other'),
+                text = win.find('.x-explanation-part input');
+            
+            radios.change(function(){                
+                var target = $(this);
+                
+                if (otherRadio.is(':checked')) {
+                    otherOption.addClass('x-checked');
+                } else {
+                    otherOption.removeClass('x-checked');                    
+                    
+                    me.num_trees = target.val();
+                }                                
+            });
+            
+            text.change(function(){
+               me.num_trees = text.val(); 
+            });
+        }
+    } else if(step == 4) {
+        descriptionHtml = [
+            '<div class="x-description">',
+                'Please provide your payment info',
+            '</div>'
+        ];
+
+        mainHtml = [
+            '<div class="x-payment-form-holder">',
+                '<div class="x-form-title">',
+                    'Credit Card Info',
+                '</div>',
+                '<form class="x-payment-form">',
+                    '<div class="x-form-row">',
+                        '<input type="text" name="card_number" placeholder="Card number" />',
+                    '</div>',
+                    '<div class="x-form-row">',
+                        '<input type="text" name="card_name" placeholder="Name on card" />',
+                    '</div>',
+                    '<div class="x-form-row x-divided">',
+                        '<select name="card_month">',
+                            '<option value="0" selected>Expiration Month</option>',
+                            '<option value="1">January</option>',
+                            '<option value="2">February</option>',
+                            '<option value="3">March</option>',
+                            '<option value="4">April</option>',
+                            '<option value="5">May</option>',
+                            '<option value="6">June</option>',
+                            '<option value="7">July</option>',
+                            '<option value="8">August</option>',
+                            '<option value="9">September</option>',
+                            '<option value="10">October</option>',
+                            '<option value="11">November</option>',
+                            '<option value="12">December</option>',
+                        '</select>',
+                        '<input type="text" name="card_year" placeholder="Expiration year" />',
+                        '<input type="text" name="cvc" placeholder="CVC" />',
+                    '</div>',                    
+                '</form>',
+            '</div>'
+        ];                
+        
+        buttonsHtml = [
+            '<div class="x-btn x-btn-next">',
+                'Next',
+            '</div>'
+        ];
+        
+        fn = function(win) {
+            var creditnum = win.find('input[name=card_number]'),
+                cardname = win.find('input[name=card_name]'),
+                cardmonth = win.find('select[name=card_month]'),
+                card_year = win.find('input[name=card_year]'),
+                card_cvc = win.find('input[name=cvc]');
+        
+            win.find('input, select').change(function(){
+               me.credit_card_num = creditnum.val();
+                me.credit_card_expire_month = cardmonth.find(':selected').val();
+                me.credit_card_name = cardname.val();
+                me.credit_card_expire_year = card_year.val();
+                me.credit_card_cvc = card_cvc.val(); 
+            });                        
+        }
+    } else {
+        descriptionHtml = [];
+
+        mainHtml = [            
+            '<div class="x-plant-congrats">',
+                '<h2>Congratulations!</h2>',
+                'You\'ve just planted ',
+                '<span class="x-t-orange-text">',
+                    me.num_trees,
+                '</span>! ',
+                'These trees will generate ',
+                '<span class="x-t-orange-text">',
+                    me.num_trees * me.o2_rate + ' lbs of oxygen ',
+                '</span>',
+                'per year!',
+            '</div>'
+        ];                
+        
+        buttonsHtml = [
+            '<div class="x-btn x-btn-finish">',
+                'Finish',
             '</div>'
         ];
     }
@@ -271,8 +460,12 @@ wizard.prototype.showStep = function(step) {
         }
         
         if (btn.hasClass('x-btn-prev')) {
-            me.prev();
+            me.back();
             return;
+        }
+        
+        if (btn.hasClass('x-btn-finish')) {
+            me.end();
         }
     });
     
@@ -369,6 +562,7 @@ require([
             
             map.graphics.add(new Graphic(a, markerSymbol));
         }
+                
 
         function addClusters(resp, map) {
             var photoInfo = {};
@@ -454,12 +648,17 @@ require([
                     cleanUp();
                 }
             });
-        }
+            
+            
 
-        function cleanUp() {
-            map.infoWindow.hide();
-            clusterLayer.clearSingles();
+            function cleanUp() {
+                map.infoWindow.hide();
+                clusterLayer.clearSingles();
+            }
+            
+            app.cleanUp = cleanUp
         }
+                
 
         function error(err) {
             console.log("something failed: ", err);
@@ -484,7 +683,6 @@ require([
 
         app.addClusters = addClusters;
         app.addPoint = addPoint;
-        app.cleanUp = cleanUp;
     });
 });
 
@@ -521,6 +719,12 @@ function initEvents() {
             default:
                 console.log('Unknown action ', action);
         }
+    });
+    
+    var createDashboard = $('.x-plant-button');
+    createDashboard.click(function(){        
+       var wiz = new wizard();
+       wiz.start();
     });
 }
 
@@ -580,13 +784,15 @@ function initActionMyTrees(force) {
 
     setBodyAction(action);
 
-    app.cleanUp();
+    if (app.cleanUp){
+        app.cleanUp();
+    }
 
     var url = '/data/1000-photos.json';
     $.ajax({
         url: url,
         success: function(response) {
-            app.addClusters(response);
+            app.addClusters(response, app.map);
         },
         error: function() {
             console.log('Error in url ', url)

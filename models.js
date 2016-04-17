@@ -20,7 +20,8 @@ var treesSchema = mongoose.Schema({
     x: Number,
     y: Number
   },
-  plant_time: Number
+  plant_time: Number,
+  img_url: String
 });
 
 var typesSchema = mongoose.Schema({

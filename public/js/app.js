@@ -211,7 +211,7 @@ wizard.prototype.showStep = function(step) {
             var newMap = new app.classes.Map('map-drop', {
                 basemap: "oceans",
                 center: config.center,
-                zoom: 13
+                zoom: 14
             });
 
             newMap.on("click", function(e) {
@@ -254,8 +254,10 @@ wizard.prototype.showStep = function(step) {
                 }
 
                 me.tree_id = tree;
-                me.co2_rate = tree.co2;
-                me.o2_rate = tree.o2;
+                me.co2_rate = config.treeTypes[tree].co2;
+                me.o2_rate = config.treeTypes[tree].o2;
+                
+                console.log(me)
             });
         }
 
@@ -552,7 +554,7 @@ require([
         map = new Map("map", {
             basemap: "oceans",
             center: config.center,
-            zoom: 13
+            zoom: 14
         });
 
 

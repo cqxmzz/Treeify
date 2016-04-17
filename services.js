@@ -88,23 +88,14 @@ exports.getTypes = function(Types, cob) {
   });
 }
 
-exports.getUsers = function(Users, cob) {
-  var res = [];
-  var i;
-  Users.find(function(err, users) {
+exports.getProfile = function(Users, user_id, cob) {
+  Users.findById(user_id, function(err, user) {
     if (err) 
       return console.error(err);
-
-    for (i = 0; i < users.length; ++i) {
-      var user = users[i];
-      data = {};
-      data['name'] = user['name'];
-      data['email'] = user['email'];
-      data['type'] = user['type'];
-      data['trees'] = user['trees'];
-      res.push(data);
-    }
-    cob(res);
+    data = {};
+    data['name'] = user['name'];
+    data['img'] = "";
+    cob(data);
   });
 }
 

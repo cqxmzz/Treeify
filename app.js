@@ -15,36 +15,29 @@ var services = require('./services');
 
 //=========Routing=========
 
-app.get('/', function (req, res) {
-  res.send('Hello World!');
-});
-
-app.get('/top-users', function (req, res) {
-	var cob = function (top_users) {
-    res.send(top_users);
-  }
-  services.getTopUsers(models.Users, cob);
+app.get('/top-users', function(req, res) {
+  services.getTopUsers(models.Users, function (data) {
+    res.send(data);
+  });
 });
 
 app.get('/trees', function(req, res) {
-  var cob = function (data) {
-  	res.send(data);
-  }
-  services.getTrees(models.Trees, models.Types, cob);
+  services.getTrees(models.Trees, models.Types, function (data) {
+    res.send(data);
+  });
 });
 
 app.get('/types', function(req, res) {
-  var cob = function (data) {
+  services.getTypes(models.Types, function (data) {
     res.send(data);
-  }
-  services.getTypes(models.Types, cob);
+  });
 });
 
-app.get('/users', function(req, res) {
-  var cob = function (data) {
+app.get('/profile', function(req, res) {
+  var user_id = '5712a546e4b065a8c4d713c6';
+  services.getProfile(models.Users, user_id, function (data) {
     res.send(data);
-  }
-  services.getUsers(models.Users, cob);
+  });
 });
 
 app.post('/plant', function(req, res) {

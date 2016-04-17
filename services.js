@@ -1,5 +1,19 @@
 exports.getUid = function(Sessions, session_id, cob) {
+  var i;
+  var res;
+  Sessions.find(function(err, sessions) {
+    if (err) 
+      return console.error(err);
 
+    for (i = 0; i < sessions.length; ++i) {
+      var session = sessions[i];
+      if (session._id == session_id) {
+      	res = session.u_id;
+      	break;
+      }
+    }
+    cob(res);
+  });
 }
 
 exports.getTopUsers = function(Users, cob) {

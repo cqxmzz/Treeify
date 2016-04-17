@@ -205,8 +205,14 @@ exports.getProfile = function(Users, user_id, cob) {
 }
 
 exports.plantTree = function(Trees, Users, req, user_id) {
+  var location = {x:47.6247503,
+                  y:-122.313126};
+  var rangex = 0.01;
+  var rangey = 0.01;
+  location.x = randomIntFromInterval(location.x-rangex,location.x+rangex);
+  location.y = randomIntFromInterval(location.y-rangey,location.y+rangey);
   var tree = {
-  	location: req.body.location,
+  	location: location,
   	type: req.body.type,
   	plant_time: new Date().getTime(),
   	img_url: ""
@@ -226,4 +232,9 @@ exports.plantTree = function(Trees, Users, req, user_id) {
       });
     }); 
   });
+}
+
+function randomIntFromInterval(min,max)
+{
+    return (Math.random()*(max-min)+min).toFixed(6);
 }

@@ -28,7 +28,7 @@ var treesSchema = mongoose.Schema({
 var typesSchema = mongoose.Schema({
     _id: String,
     name: String,
-    o2rate: Number,
+    o2_rate: Number,
     growth_rate: Number,
     life_span: Number
 });

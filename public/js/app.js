@@ -40,7 +40,29 @@ var wizard = function() {
 };
 
 wizard.prototype.statics = {
-    steps: [1, 2, 3, 4]
+    steps: [1, 2, 3, 4],
+    num_trees: [
+        {
+            num: 1,
+            written: 'One tree',
+            cancelled: 5
+        },
+        {
+            num: 5,
+            written: 'Five trees',
+            cancelled: 30
+        },
+        {
+            num: 10,
+            written: 'Ten trees',
+            cancelled: 60
+        },
+        {
+            num: 50,
+            written: 'Fifty trees',
+            cancelled: 5
+        }
+    ]
 };
 
 wizard.prototype.start = function() {
@@ -93,20 +115,19 @@ wizard.prototype.showStep = function(step) {
         return
     }
 
-    var titleHtml = [],
-            descriptionHtml = [],
-            mainHtml = [],
-            buttonsHtml = []
-            fn = emptyFn;
+    var titleHtml = [
+            'Plant a tree'
+        ],
+        descriptionHtml = [],
+        mainHtml = [],
+        buttonsHtml = []
+        fn = emptyFn;
 
     if (step == 1) {
-        titleHtml = [
-            'Plan a tree'
-        ];
 
         descriptionHtml = [
             '<div class="x-description">',
-            'Drop pins where you want to plant',
+                'Drop pins where you want to plant',
             '</div>'
         ];
 
@@ -140,29 +161,101 @@ wizard.prototype.showStep = function(step) {
                 $.each(config.treeAreas, function(key, value) {
                    app.addPoint(value, newMap);                                      
                 });
+                
+                $('#map-drop').css({
+                    position: 'inherit'
+                });
             });
         }
+    } else if(step == 2) {
+        descriptionHtml = [
+            '<div class="x-description">',
+                'How many trees to you want to plant in this area?',
+            '</div>'
+        ];
+        
+        var radios = [];
+       
+       var i = 0;
+        
+        me.statics.num_trees.forEach(function(n){            
+            var num = n.num,
+                written = n.written,
+                cancelled = n.cancelled;
+            
+            var cls = i % 2;
+            i++;
+            
+            var radio = [
+                '<div class="x-option x-row-' + cls + '">',
+                    '<div class="x-form-part">',
+                        '<input type="radio" name="num-trees" value="' + num + '"/>',
+                        '<span class="x-radio-value">',
+                            written,
+                        '</span>',
+                    '</div>',
+                    '<div class="x-explanation-part">',
+                        '<span class="x-t-orange-text">',
+                            cancelled + ' ' + 'lbs ',
+                        '</span>',
+                        'of CO2 emissions will be cancelled',
+                    '</div>',
+                '</div>'
+            ];
+            
+            radios.push(radio.join(''))
+        });
+
+        mainHtml = [
+            '<form class="x-num-trees-selector">',
+                radios.join(''),
+            '</form>'
+        ];
+        
+        buttonsHtml = [
+            '<div class="x-btn x-btn-prev">',
+                'Next',
+            '</div>',
+            '<div class="x-btn x-btn-next">',
+                'Next',
+            '</div>'
+        ];
     }
+    
+    var stepDivs = [];
+    
+    this.statics.steps.forEach(function(s){
+       var cls = '';
+       
+       if (s == step) {
+           cls = 'x-active';
+       }
+       
+       stepDivs.push('<div class="x-step ' + cls + '"></div>');
+    });
     
     // @todo
     var html = [
         '<div class="x-window">',
-            '<div class="x-win-title">',
+            '<div class="x-win-title x-t-green-background">',
                 titleHtml.join(''),
             '</div>',
-            '<div class="x-win-description>',
-                descriptionHtml.join(''),
-            '</div>',
             '<div class="x-win-body">',
-                mainHtml.join(''),
-            '</div>',
-            '<div class="x-win-buttons">',
-                buttonsHtml.join(''),
+                '<div class="x-win-description">',
+                    descriptionHtml.join(''),
+                '</div>',
+                '<div class="x-win-main">',
+                    mainHtml.join(''),
+                '</div>',    
+                '<div class="x-steps">',
+                    stepDivs.join(''),
+                '</div>',
+                '<div class="x-win-buttons">',
+                    buttonsHtml.join(''),
+                '</div>',
             '</div>',
         '</div>'
     ];
-    
-    console.log(html.join(''))
     
     var el = $(html.join(''));  
     
@@ -173,7 +266,13 @@ wizard.prototype.showStep = function(step) {
         if (btn.hasClass('x-btn-next')){
             if (me.validate(el)) {
                 me.next();
-            }            
+            }     
+            return;
+        }
+        
+        if (btn.hasClass('x-btn-prev')) {
+            me.prev();
+            return;
         }
     });
     

@@ -68,6 +68,10 @@ exports.getTrees = function(Trees, Types, cob) {
   });
 }
 
+exports.getTreesForUser = function(Trees, Types, user_id, cob) {
+
+}
+
 exports.getTypes = function(Types, cob) {
   var res = [];
   var i;

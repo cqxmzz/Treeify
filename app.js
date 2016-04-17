@@ -27,6 +27,13 @@ app.get('/trees', function(req, res) {
   });
 });
 
+app.get('/trees/mine', function(req, res) {
+  var user_id = '5712a546e4b065a8c4d713c6';
+  services.getTreesForUser(models.Users, models.Trees, models.Types, user_id, function (data) {
+    res.send(data);
+  });
+});
+
 app.get('/types', function(req, res) {
   services.getTypes(models.Types, function (data) {
     res.send(data);

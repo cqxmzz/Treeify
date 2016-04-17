@@ -1,7 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
-
+var session = require('express-session')
 //=========MODELS=========
 
 var models = require('./models');
@@ -21,7 +21,9 @@ fb_config.registerStratergy(models, services);
 var app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(session({ secret: 'keyboard cat', key: 'sid', resave: 'true', saveUninitialized: 'true'}));
 app.use(passport.initialize());
+app.use(passport.session());
 app.use(express.static('public'));
 
 //=========Routing=========
@@ -32,7 +34,7 @@ app.get('/auth/facebook/callback',
   passport.authenticate('facebook', {
        /* successRedirect : '/', */
        failureRedirect: '/',
-       session: false,
+       session: true,
        authType: 'rerequest',
        display: 'popup'
   }),
@@ -40,18 +42,6 @@ app.get('/auth/facebook/callback',
     res.redirect('/after-auth.html');
   }
 );
-
-app.get('/login', function(req, res) {
-  var name = 'Qiming Chen';
-  var email = 'simoncqm@gmail.com';
-  services.getLogin(models.Users, models.Sessions, name, email, function(data) {
-    res.send(data);
-  });
-});
-
-app.get('/logout', function (req, res) {
-  // TODO
-});
 
 app.get('/top-users', function(req, res) {
   services.getTopUsers(models.Users, function(data) {
@@ -66,9 +56,13 @@ app.get('/trees', function(req, res) {
 });
 
 app.get('/trees/mine', function(req, res) {
-  var user_id = '5712a546e4b065a8c4d713c6';
-  services.getTreesForUser(models.Users, models.Trees, models.Types, user_id, function(data) {
-    res.send(data);
+  var sid = req.session.passport.user;
+  var user_id;
+  services.getUid(models.Sessions, sid, function(data) {
+    user_id = data;
+    services.getTreesForUser(models.Users, models.Trees, models.Types, user_id, function(data) {
+      res.send(data);
+    });
   });
 });
 
@@ -79,16 +73,23 @@ app.get('/types', function(req, res) {
 });
 
 app.get('/profile', function(req, res) {
-  var user_id = '5712a546e4b065a8c4d713c6';
-  services.getProfile(models.Users, user_id, function(data) {
-    res.send(data);
+  var sid = req.session.passport.user;
+  var user_id;
+  services.getUid(models.Sessions, sid, function(data) {
+    user_id = data;
+    services.getProfile(models.Users, user_id, function(data) {
+      res.send(data);
+    });
   });
 });
 
 app.post('/plant', function(req, res) {
-  console.log(req);
-  var user_id = '5712a546e4b065a8c4d713c6';
-  services.plantTree(models.Trees, models.Users, req, user_id);
+  var sid = req.session.passport.user;
+  var user_id;
+  services.getUid(models.Sessions, sid, function(data) {
+    user_id = data;
+    services.plantTree(models.Trees, models.Users, req, user_id);
+  });
 });
 
 app.listen(80, function () {

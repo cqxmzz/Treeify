@@ -16,6 +16,10 @@ app.get('/', function (req, res) {
   res.send('Hello World!');
 });
 
+app.get('/', function (req, res) {
+  res.send('Hello World!');
+});
+
 app.listen(80, function () {
   console.log('Treeify app listening on port 80!');
 });

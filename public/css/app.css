@@ -165,14 +165,27 @@ html, body {
     width: 60px;
     height: 60px;
     overflow: hidden;
-    background-size: cover;
     background-repeat: no-repeat;
+    
     border-radius: 30px;
     background-color: #999;    
+    background-size: contain;
+    opacity: 0.8;        
+}
+
+.x-action .x-action-pic img {
+    width: 40px;
+    margin-left: 10px;
+    margin-top: 10px;
 }
 
 .x-action.x-active .x-action-pic {
     background-color: #4783bf;
+    opacity: 1;
+}
+
+#action-my-trees .x-action-pic img {
+    margin-top: 5px;
 }
 
 .x-action .x-action-description {

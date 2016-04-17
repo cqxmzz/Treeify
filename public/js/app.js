@@ -2,11 +2,11 @@ var map;
 
 var config = {
     center: [
-        -122.3321,
-        47.6062
+        -122.313126,
+        47.6247503
     ],
     treeTypes: {
-       'pine': {
+        'pine': {
             id: '123',
             name: 'Pine',
             o2: 260,
@@ -18,7 +18,7 @@ var config = {
             name: 'Oak',
             o2: 260,
             co2: 48
-        }        
+        }
     },
     treeAreas: {
         1: [-122.3321, 47.6062],
@@ -43,14 +43,15 @@ function emptyFn() {
 
 var wizard = function() {
     this.step = 0;
-    this.area = null;
+    this.lat = null;
+    this.lng = null;
     this.num_trees = 0;
     this.credit_card_num = null;
     this.credit_card_name = null;
     this.credit_card_expire_month = null;
     this.credit_card_expire_year = null;
     this.credit_card_cvc = null;
-        
+
     this.co2_rate = 0;
     this.o2_rate = 0
     this.tree_id = null;
@@ -59,27 +60,27 @@ var wizard = function() {
 };
 
 wizard.prototype.statics = {
-    steps: [1, 2, 3, 4, 5],
+    steps: [1, 2, 3, 4],
     num_trees: [
         {
             num: 1,
             written: 'One tree',
-            cancelled: 5
+            cancelled: config.treeTypes.oak.co2 * 1
         },
         {
             num: 5,
             written: 'Five trees',
-            cancelled: 30
+            cancelled: config.treeTypes.oak.co2 * 5
         },
         {
             num: 10,
             written: 'Ten trees',
-            cancelled: 60
+            cancelled: config.treeTypes.oak.co2 * 10
         },
         {
             num: 50,
             written: 'Fifty trees',
-            cancelled: 5
+            cancelled: config.treeTypes.oak.co2 * 50
         }
     ]
 };
@@ -87,10 +88,10 @@ wizard.prototype.statics = {
 wizard.prototype.start = function() {
     this.step = 1;
     this.started = true
-    
+
     $('.x-modal').empty();
     $('.x-modal-background').addClass('x-active');
-    
+
     this.showStep(this.step);
 }
 
@@ -126,9 +127,11 @@ wizard.prototype.next = function() {
     this.showStep(this.step);
 }
 
-wizard.prototype.end = function(el) {    
+wizard.prototype.end = function(el) {
     $('.x-modal').empty();
-    $('.x-modal-background').removeClass('x-active');    
+    $('.x-modal-background').removeClass('x-active');
+
+    initActionMyTrees(true);
 }
 
 wizard.prototype.validate = function(el) {
@@ -136,360 +139,374 @@ wizard.prototype.validate = function(el) {
 }
 
 wizard.prototype.send = function(el) {
+    var me = this;
+    var x = 0;
+
+    for (var i = 1; i <= this.num_trees; i++) {
+        me.performRequest(i);
+    }
+}
+
+wizard.prototype.performRequest = function(num) {
+    var me = this;
+
     $.ajax({
-        url: ''
+        url: '/plant',
+        method: 'post',
+        data: JSON.stringify({
+            type: me.tree_id
+        }),
+        success: function() {
+            if (num == me.num_trees) {
+                me.next();
+            }
+        }
     });
 }
 
 wizard.prototype.showStep = function(step) {
     var me = this;
-    
+
     if (this.statics.steps.indexOf(step) == -1) {
         console.log('Invalid step');
         return
     }
 
     var titleHtml = [
-            'Plant a tree'
-        ],
-        descriptionHtml = [],
-        mainHtml = [],
-        buttonsHtml = []
-        fn = emptyFn;
+        'Plant a tree'
+    ],
+            descriptionHtml = [],
+            mainHtml = [],
+            buttonsHtml = []
+    fn = emptyFn;
 
-    if (step == 1) {
+    if (false) {
 
         descriptionHtml = [
             '<div class="x-description">',
-                'Drop pins where you want to plant',
+            'Drop pins where you want to plant',
             '</div>'
         ];
 
         mainHtml = [
             '<div class="x-map-drop">',
-                '<div data-dojo-type="dijit/layout/BorderContainer" ',
-                    'data-dojo-props="design:\'headline\',gutters:false" ',
-                    'style="width: 100%; height: 100%; margin: 0;">',
-                    '<div id="map-drop" ',
-                         'data-dojo-type="dijit/layout/ContentPane"',
-                         'data-dojo-props="region:\'center\'"> ',
-                    '</div>',
-                '</div>',
-            '</div>'                        
-        ];
-        
-        buttonsHtml = [
-            '<div class="x-btn x-btn-next">',
-                'Next',
+            '<div data-dojo-type="dijit/layout/BorderContainer" ',
+            'data-dojo-props="design:\'headline\',gutters:false" ',
+            'style="width: 100%; height: 100%; margin: 0;">',
+            '<div id="map-drop" ',
+            'data-dojo-type="dijit/layout/ContentPane"',
+            'data-dojo-props="region:\'center\'"> ',
+            '</div>',
+            '</div>',
             '</div>'
         ];
 
-        fn = function(win) {            
+        buttonsHtml = [
+            '<div class="x-btn x-btn-next">',
+            'Next',
+            '</div>'
+        ];
+
+        fn = function(win) {
             var newMap = new app.classes.Map('map-drop', {
                 basemap: "oceans",
                 center: config.center,
                 zoom: 13
             });
 
-            newMap.on("load", function() {                
-                $.each(config.treeAreas, function(key, value) {
-                   app.addPoint(value, newMap);                                      
-                });
-                
-                $('#map-drop').css({
-                    position: 'inherit'
-                });
+            newMap.on("click", function(e) {
+                console.log(e.geometry);
             });
         }
-    } else if (step == 2) {
+    } else if (step == 1) {
         descriptionHtml = [
             '<div class="x-description">',
-                'Click on the type of tree that you want to plant',                
-            '</div>'            
+            'Click on the type of tree that you want to plant',
+            '</div>'
         ];
-        
+
         mainHtml = [
             '<div class="x-tree-chooser">',
-                '<div class="x-tree-img x-pine"></div>',
-                '<div class="x-tree-img x-oak"></div>',
+            '<div class="x-tree-img x-pine"></div>',
+            '<div class="x-tree-img x-oak"></div>',
             '</div>'
         ];
-        
+
         buttonsHtml = [
             '<div class="x-btn x-btn-next">',
-                'Next',
+            'Next',
             '</div>'
         ];
-        
+
         fn = function(win) {
-            var trees = win.find('.x-tree-img');               
-            
-            trees.click(function(){
-                trees.removeClass('x-selected');                
+            var trees = win.find('.x-tree-img');
+
+            trees.click(function() {
+                trees.removeClass('x-selected');
                 var target = $(this);
-                
+
                 target.addClass('x-selected');
-                
-                var tree = config.treeTypes.pine;                                
-                
+
+                var tree = config.treeTypes.pine;
+
                 if (target.hasClass('x-oak')) {
                     tree = config.treeTypes.oak
                 }
-                
+
                 me.tree_id = tree.id;
                 me.co2_rate = tree.co2;
                 me.o2_rate = tree.o2;
             });
         }
-        
-    } else if(step == 3) {
+
+    } else if (step == 2) {
         descriptionHtml = [
             '<div class="x-description">',
-                'How many trees to you want to plant in this area?',
+            'How many trees to you want to plant in this area?',
             '</div>'
         ];
-        
+
         var radios = [];
-       
-       var i = 0;
-        
-        me.statics.num_trees.forEach(function(n){            
+
+        var i = 0;
+
+        me.statics.num_trees.forEach(function(n) {
             var num = n.num,
-                written = n.written,
-                cancelled = n.cancelled;
-            
+                    written = n.written,
+                    cancelled = n.cancelled;
+
             var cls = i % 2;
             i++;
-            
+
             var radio = [
                 '<div class="x-option x-row-' + cls + '">',
-                    '<div class="x-form-part">',
-                        '<input type="radio" name="num-trees" value="' + num + '"/>',
-                        '<span class="x-radio-value">',
-                            written,
-                        '</span>',
-                    '</div>',
-                    '<div class="x-explanation-part">',
-                        '<span class="x-t-orange-text">',
-                            cancelled + ' ' + 'lbs ',
-                        '</span>',
-                        'of CO2 emissions will be cancelled',
-                    '</div>',
+                '<div class="x-form-part">',
+                '<input type="radio" name="num-trees" value="' + num + '"/>',
+                '<span class="x-radio-value">',
+                written,
+                '</span>',
+                '</div>',
+                '<div class="x-explanation-part">',
+                '<span class="x-t-orange-text">',
+                cancelled + ' ' + 'lbs ',
+                '</span>',
+                'of CO2 emissions will be cancelled',
+                '</div>',
                 '</div>'
             ];
-            
+
             radios.push(radio.join(''))
         });
-        
+
         var cls = i % 2;
         var otherRadio = [
             '<div class="x-option x-other x-row-' + cls + '">',
-                '<div class="x-form-part">',
-                    '<input type="radio" name="num-trees" value="0"/>',
-                    '<span class="x-radio-value">Other</span>',
-                '</div>',
-                '<div class="x-explanation-part">',
-                    '<input type="text" name="other-num" placeholder="Enter number here" />',
-                '</div>',
+            '<div class="x-form-part">',
+            '<input type="radio" name="num-trees" value="0"/>',
+            '<span class="x-radio-value">Other</span>',
+            '</div>',
+            '<div class="x-explanation-part">',
+            '<input type="text" name="other-num" placeholder="Enter number here" />',
+            '</div>',
             '</div>'
         ];
-        
+
         radios.push(otherRadio.join(''));
 
         mainHtml = [
             '<form class="x-num-trees-selector">',
-                radios.join(''),
+            radios.join(''),
             '</form>'
         ];
-        
+
         buttonsHtml = [
             '<div class="x-btn x-btn-next">',
-                'Next',
+            'Next',
             '</div>'
         ];
-        
-        fn = function(win){
+
+        fn = function(win) {
             var radios = win.find('.x-option input[type=radio]'),
-                otherRadio = win.find('.x-other input[type=radio]'),
-                otherOption = win.find('.x-other'),
-                text = win.find('.x-explanation-part input');
-            
-            radios.change(function(){                
+                    otherRadio = win.find('.x-other input[type=radio]'),
+                    otherOption = win.find('.x-other'),
+                    text = win.find('.x-explanation-part input');
+
+            radios.change(function() {
                 var target = $(this);
-                
+
                 if (otherRadio.is(':checked')) {
                     otherOption.addClass('x-checked');
                 } else {
-                    otherOption.removeClass('x-checked');                    
-                    
+                    otherOption.removeClass('x-checked');
+
                     me.num_trees = target.val();
-                }                                
+                }
             });
-            
-            text.change(function(){
-               me.num_trees = text.val(); 
+
+            text.change(function() {
+                me.num_trees = text.val();
             });
         }
-    } else if(step == 4) {
+    } else if (step == 3) {
         descriptionHtml = [
             '<div class="x-description">',
-                'Please provide your payment info',
+            'Please provide your payment info',
             '</div>'
         ];
 
         mainHtml = [
             '<div class="x-payment-form-holder">',
-                '<div class="x-form-title">',
-                    'Credit Card Info',
-                '</div>',
-                '<form class="x-payment-form">',
-                    '<div class="x-form-row">',
-                        '<input type="text" name="card_number" placeholder="Card number" />',
-                    '</div>',
-                    '<div class="x-form-row">',
-                        '<input type="text" name="card_name" placeholder="Name on card" />',
-                    '</div>',
-                    '<div class="x-form-row x-divided">',
-                        '<select name="card_month">',
-                            '<option value="0" selected>Expiration Month</option>',
-                            '<option value="1">January</option>',
-                            '<option value="2">February</option>',
-                            '<option value="3">March</option>',
-                            '<option value="4">April</option>',
-                            '<option value="5">May</option>',
-                            '<option value="6">June</option>',
-                            '<option value="7">July</option>',
-                            '<option value="8">August</option>',
-                            '<option value="9">September</option>',
-                            '<option value="10">October</option>',
-                            '<option value="11">November</option>',
-                            '<option value="12">December</option>',
-                        '</select>',
-                        '<input type="text" name="card_year" placeholder="Expiration year" />',
-                        '<input type="text" name="cvc" placeholder="CVC" />',
-                    '</div>',                    
-                '</form>',
-            '</div>'
-        ];                
-        
-        buttonsHtml = [
-            '<div class="x-btn x-btn-send">',
-                'Pay',
+            '<div class="x-form-title">',
+            'Credit Card Info',
+            '</div>',
+            '<form class="x-payment-form">',
+            '<div class="x-form-row">',
+            '<input type="text" name="card_number" placeholder="Card number" />',
+            '</div>',
+            '<div class="x-form-row">',
+            '<input type="text" name="card_name" placeholder="Name on card" />',
+            '</div>',
+            '<div class="x-form-row x-divided">',
+            '<select name="card_month">',
+            '<option value="0" selected>Expiration Month</option>',
+            '<option value="1">January</option>',
+            '<option value="2">February</option>',
+            '<option value="3">March</option>',
+            '<option value="4">April</option>',
+            '<option value="5">May</option>',
+            '<option value="6">June</option>',
+            '<option value="7">July</option>',
+            '<option value="8">August</option>',
+            '<option value="9">September</option>',
+            '<option value="10">October</option>',
+            '<option value="11">November</option>',
+            '<option value="12">December</option>',
+            '</select>',
+            '<input type="text" name="card_year" placeholder="Expiration year" />',
+            '<input type="text" name="cvc" placeholder="CVC" />',
+            '</div>',
+            '</form>',
             '</div>'
         ];
-        
+
+        buttonsHtml = [
+            '<div class="x-btn x-btn-send">',
+            'Pay',
+            '</div>'
+        ];
+
         fn = function(win) {
             var creditnum = win.find('input[name=card_number]'),
-                cardname = win.find('input[name=card_name]'),
-                cardmonth = win.find('select[name=card_month]'),
-                card_year = win.find('input[name=card_year]'),
-                card_cvc = win.find('input[name=cvc]');
-        
-            win.find('input, select').change(function(){
-               me.credit_card_num = creditnum.val();
+                    cardname = win.find('input[name=card_name]'),
+                    cardmonth = win.find('select[name=card_month]'),
+                    card_year = win.find('input[name=card_year]'),
+                    card_cvc = win.find('input[name=cvc]');
+
+            win.find('input, select').change(function() {
+                me.credit_card_num = creditnum.val();
                 me.credit_card_expire_month = cardmonth.find(':selected').val();
                 me.credit_card_name = cardname.val();
                 me.credit_card_expire_year = card_year.val();
-                me.credit_card_cvc = card_cvc.val(); 
-            });                        
+                me.credit_card_cvc = card_cvc.val();
+            });
         }
     } else {
         descriptionHtml = [];
 
-        mainHtml = [            
+        mainHtml = [
             '<div class="x-plant-congrats">',
-                '<h2>Congratulations!</h2>',
-                'You\'ve just planted ',
-                '<span class="x-t-orange-text">',
-                    me.num_trees,
-                '</span>! ',
-                'These trees will generate ',
-                '<span class="x-t-orange-text">',
-                    me.num_trees * me.o2_rate + ' lbs of oxygen ',
-                '</span>',
-                'per year!',
+            '<h2>Congratulations!</h2>',
+            'You\'ve just planted ',
+            '<span class="x-t-orange-text">',
+            me.num_trees,
+            '</span>! ',
+            'These trees will generate ',
+            '<span class="x-t-orange-text">',
+            me.num_trees * me.o2_rate + ' lbs of oxygen ',
+            '</span>',
+            'per year!',
             '</div>'
-        ];                
-        
+        ];
+
         buttonsHtml = [
             '<div class="x-btn x-btn-finish">',
-                'Finish',
+            'Finish',
             '</div>'
         ];
     }
-    
+
     var stepDivs = [];
-    
-    this.statics.steps.forEach(function(s){
-       var cls = '';
-       
-       if (s == step) {
-           cls = 'x-active';
-       }
-       
-       stepDivs.push('<div class="x-step ' + cls + '"></div>');
+
+    this.statics.steps.forEach(function(s) {
+        var cls = '';
+
+        if (s == step) {
+            cls = 'x-active';
+        }
+
+        stepDivs.push('<div class="x-step ' + cls + '"></div>');
     });
-    
+
     // @todo
     var html = [
         '<div class="x-window">',
-            '<div class="x-win-title x-t-green-background">',
-                titleHtml.join(''),
-            '</div>',
-            '<div class="x-win-body">',
-                '<div class="x-win-description">',
-                    descriptionHtml.join(''),
-                '</div>',
-                '<div class="x-win-main">',
-                    mainHtml.join(''),
-                '</div>',    
-                '<div class="x-steps">',
-                    stepDivs.join(''),
-                '</div>',
-                '<div class="x-win-buttons">',
-                    buttonsHtml.join(''),
-                '</div>',
-            '</div>',
+        '<div class="x-win-title x-t-green-background">',
+        titleHtml.join(''),
+        '</div>',
+        '<div class="x-win-body">',
+        '<div class="x-win-description">',
+        descriptionHtml.join(''),
+        '</div>',
+        '<div class="x-win-main">',
+        mainHtml.join(''),
+        '</div>',
+        '<div class="x-steps">',
+        stepDivs.join(''),
+        '</div>',
+        '<div class="x-win-buttons">',
+        buttonsHtml.join(''),
+        '</div>',
+        '</div>',
         '</div>'
     ];
-    
-    var el = $(html.join(''));  
-    
-    
-    el.find('.x-btn').click(function(){
+
+    var el = $(html.join(''));
+
+
+    el.find('.x-btn').click(function() {
         var btn = $(this);
-        
-        if (btn.hasClass('x-btn-next')){
+
+        if (btn.hasClass('x-btn-next')) {
             if (me.validate(el)) {
                 me.next();
-            }     
+            }
             return;
         }
-        
+
         if (btn.hasClass('x-btn-prev')) {
             me.back();
             return;
         }
-        
-        
-        if (btn.hasClass('x-btn-prev')) {
+
+
+        if (btn.hasClass('x-btn-send')) {
             me.send();
             return;
-        }        
-        
+        }
+
         if (btn.hasClass('x-btn-finish')) {
             me.end();
         }
     });
-    
+
     var modal = $('.x-modal');
-    
+
     modal.empty();
     modal.append(el);
-    
-    setTimeout(function(){
+
+    setTimeout(function() {
         fn(el);
-    }, 10);    
+    }, 10);
 }
 
 require([
@@ -540,7 +557,7 @@ require([
 
 
         app.map = map;
-        
+
         app.classes.Map = Map
 
         map.on("load", function() {
@@ -549,16 +566,15 @@ require([
 
             app.init();
         });
-        
-        
+
         //@todo
         function addPoint(geo, map) {
             var markerSymbol = new SimpleMarkerSymbol();
-            
+
             var wgs = new SpatialReference({
                 "wkid": 4326
             });
-            
+
             var latlng = new Point(parseFloat(geo[0]), parseFloat(geo[1]), wgs);
             var webMercator = webMercatorUtils.geographicToWebMercator(latlng);
 
@@ -566,10 +582,10 @@ require([
                 "x": webMercator.x,
                 "y": webMercator.y
             };
-            
+
             map.graphics.add(new Graphic(a, markerSymbol));
         }
-                
+
 
         function addClusters(resp, map) {
             var photoInfo = {};
@@ -580,13 +596,13 @@ require([
             photoInfo.data = arrayUtils.map(resp, function(p) {
                 var latlng = new Point(p.location.y, p.location.x, wgs);
                 var webMercator = webMercatorUtils.geographicToWebMercator(latlng);
-                                
+
 
                 var attributes = {
                     "Caption": p.type,
                     "Image": p.img,
                     "Oxygen": 'aa'
-                };                                
+                };
 
                 return {
                     "x": webMercator.x,
@@ -594,7 +610,7 @@ require([
                     "attributes": attributes
                 };
             });
-            
+
             console.log(photoInfo)
 
             // popupTemplate to work with attributes specific to this dataset
@@ -650,15 +666,20 @@ require([
                     cleanUp();
                 }
             });
-                       
+
             function cleanUp() {
                 map.infoWindow.hide();
                 clusterLayer.clearSingles();
             }
-            
-            app.cleanUp = cleanUp
+
+            app.clean = function() {
+                clusterLayer.clear();
+                map.removeLayer(clusterLayer);
+            }
+
+            app.clusterLayer = clusterLayer;
         }
-                
+
 
         function error(err) {
             console.log("something failed: ", err);
@@ -696,7 +717,7 @@ function init() {
     });
 
     initEvents();
-    
+
     initActionHome(true);
 }
 
@@ -722,11 +743,11 @@ function initEvents() {
                 console.log('Unknown action ', action);
         }
     });
-    
+
     var createDashboard = $('.x-plant-button');
-    createDashboard.click(function(){        
-       var wiz = new wizard();
-       wiz.start();
+    createDashboard.click(function() {
+        var wiz = new wizard();
+        wiz.start();
     });
 }
 
@@ -763,16 +784,18 @@ function initActionHome(force) {
     actionButtons.removeClass('x-active');
     actionBtn.addClass('x-active');
 
-    app.state.actionTab = action;        
+    app.state.actionTab = action;
 
     setBodyAction(action);
-    
-    
+
+    if (app.clean) {
+        app.clean();
+    }
+
     var url = '/trees';
     $.ajax({
         url: url,
         success: function(response) {
-            console.log(response)
             app.addClusters(response, app.map);
         },
         error: function() {
@@ -799,9 +822,40 @@ function initActionMyTrees(force) {
 
     setBodyAction(action);
 
-    if (app.cleanUp){
-        app.cleanUp();
+    var congratsDescription = $('.x-congrats-description');
+    congratsDescription.empty();
+
+    if (app.clean) {
+        app.clean();
     }
+
+    $.ajax({
+        url: '/trees/mine',
+        success: function(response) {
+            console.log(response)
+            app.addClusters(response, app.map);
+
+
+            var congratsHtml = [
+                '<div>',
+                'You have ',
+                '<span class="x-t-orange-text">',
+                response.length,
+                ' trees ',
+                '</span>',
+                'planted. These trees generate ',
+                '<span class="x-t-orange-text">',
+                response.length * config.treeTypes.pine.o2,
+                ' lbs of Oxygen ',
+                '</span>',
+                ' per year!',
+                '<p>Thank you for making the world a better place</p>',
+                '</div>'
+            ];
+            
+            congratsDescription.append($(congratsHtml.join('')));
+        }
+    });
 }
 
 function initActionRanking(force) {
@@ -838,11 +892,11 @@ function loginCallBack() {
         url: url,
         success: function(response) {
             userName.textContent = response.name;
-            pic[0].style.backgroundImage = "url('" + response.img +"')";
+            pic[0].style.backgroundImage = "url('" + response.img + "')";
         },
         error: function() {
             console.log('Error in url ', url)
         }
     });
-    
+
 }
